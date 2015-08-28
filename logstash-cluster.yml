@@ -1,7 +1,6 @@
 client:
     image: elastic
     volumes:
-        - ./data:/data
         - ./config:/config
     ports:
         - 9200:9200
