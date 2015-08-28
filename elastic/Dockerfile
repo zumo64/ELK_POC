@@ -15,7 +15,6 @@ RUN /opt/elasticsearch/bin/plugin -i elasticsearch/shield/latest
 RUN /opt/elasticsearch/bin/plugin -i elasticsearch/marvel/latest
 RUN /opt/elasticsearch/bin/plugin -i elasticsearch/watcher/latest
 
-#VOLUME /client/data
 VOLUME /data
 VOLUME /config
 
