@@ -1,0 +1,27 @@
+client:
+    image: elastic
+    volumes:
+        - ./data:/data
+        - ./config:/config
+    ports:
+        - 9200:9200
+    extra_hosts:
+        - "client:127.0.0.1"
+    command: ./elasticsearch --node.client true --http.enabled true
+
+data1:
+    image: elastic
+    links:
+        - client
+    volumes:
+        - ./data:/data
+        - ./config:/config
+
+data2:
+    image: elastic
+    links:
+        - client
+    volumes:
+        - ./data:/data
+        - ./config:/config
+

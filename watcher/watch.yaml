@@ -1,0 +1,57 @@
+---
+actions:
+  index_payload:
+    index:
+      doc_type: alert
+      index: alerts
+    transform:
+      script: "return [ watch_id: ctx.watch_id, payload: ctx.payload ]"
+  send_email:
+    email:
+      attach_data: true
+      body: |-
+        Received {{ctx.payload.total}} error documents in the last 5 minutes.
+
+        Hosts:
+
+        {{#ctx.payload.hosts}}* {{host}} ({{errors}})
+        {{/ctx.payload.hosts}}
+      subject: "[ALERT] {{ctx.watch_id}}"
+      to: you@example.com
+    transform:
+      script: |-
+        return [
+          total: ctx.payload.hits.total,
+          hosts: ctx.payload.aggregations.hosts.buckets.collect { [ host: it.key, errors: it.doc_count ] },
+          errors: ctx.payload.hits.hits.collect { it._source }
+        ];
+condition:
+  script:
+    inline: "ctx.payload.hits.total > 3"
+input:
+  search:
+    request:
+      body:
+        aggregations:
+          hosts:
+            terms:
+              field: host
+        query:
+          filtered:
+            filter:
+              range:
+                timestamp:
+                  gte: "{{ctx.trigger.scheduled_time}}||-5m"
+                  lt: "{{ctx.trigger.triggered_time}}"
+            query:
+              match:
+                status: 500
+      indices:
+        - test
+metadata:
+  tags:
+    - errors
+throttle_period: 30s
+trigger:
+  schedule:
+    interval: 10s
