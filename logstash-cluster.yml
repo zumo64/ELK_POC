@@ -7,9 +7,7 @@ client:
         - 9200:9200
     extra_hosts:
         - "client:127.0.0.1"
-    #command: sh -c '/bin/sleep 1 && ./elasticsearch --path.conf=/config --node.client true --http.enabled true -Des.logger.level=DEBUG'
-    command: sh -c '/bin/sleep 1 && ./elasticsearch --path.conf=/config --node.client true --http.enabled true'
-    #command: sh -c '/bin/sleep 1 && ./elasticsearch --path.conf=/config --http.enabled true'
+    command: ./elasticsearch --node.client true --http.enabled true
 
 
 
@@ -20,7 +18,6 @@ data1:
     volumes:
         - ./data:/data
         - ./config:/config
-    command: sh -c '/bin/sleep 10 && ./elasticsearch --path.conf /config'
 
 
 data2:
@@ -30,7 +27,6 @@ data2:
     volumes:
         - ./data:/data
         - ./config:/config
-    command: sh -c '/bin/sleep 15 && ./elasticsearch --path.conf /config'
 
 
 queue:
@@ -40,7 +36,6 @@ queue:
 kb:
     image: kibana:latest
     volumes:
-        - ./data:/data
         - ./config:/config
     ports:
         - "5601:5601"
