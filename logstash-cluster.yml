@@ -1,5 +1,5 @@
 client:
-    image: elastic
+    build: elastic
     volumes:
         - ./config:/config
     ports:
@@ -11,7 +11,7 @@ client:
 
 
 data1:
-    image: elastic
+    build: elastic
     links:
         - client
     volumes:
@@ -20,7 +20,7 @@ data1:
 
 
 data2:
-    image: elastic
+    build: elastic
     links:
         - client
     volumes:
@@ -45,7 +45,7 @@ kb:
 
 
 ls_input:
-    image: logstash
+    build: logstash
     links:
       - queue
     ports:
@@ -56,7 +56,7 @@ ls_input:
         ./logstash --config /config/logstash-input.conf
 
 ls_output:
-    image: logstash
+    build: logstash
     links:
       - queue
       - client
