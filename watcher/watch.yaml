@@ -1,11 +1,13 @@
 ---
 actions:
+
   index_payload:
     index:
       doc_type: alert
       index: alerts
     transform:
       script: "return [ watch_id: ctx.watch_id, payload: ctx.payload ]"
+
   send_email:
     email:
       attach_data: true
@@ -25,9 +27,11 @@ actions:
           hosts: ctx.payload.aggregations.hosts.buckets.collect { [ host: it.key, errors: it.doc_count ] },
           errors: ctx.payload.hits.hits.collect { it._source }
         ];
+
 condition:
   script:
     inline: "ctx.payload.hits.total > 3"
+
 input:
   search:
     request:
@@ -48,10 +52,12 @@ input:
                 status: 500
       indices:
         - test
+
 metadata:
   tags:
     - errors
-throttle_period: 30s
+
 trigger:
   schedule:
     interval: 10s
+throttle_period: 30s

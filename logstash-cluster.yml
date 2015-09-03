@@ -8,8 +8,6 @@ client:
         - "client:127.0.0.1"
     command: ./elasticsearch --node.client true --http.enabled true
 
-
-
 data1:
     build: elastic
     links:
@@ -17,7 +15,6 @@ data1:
     volumes:
         - ./data:/data
         - ./config:/config
-
 
 data2:
     build: elastic
@@ -27,21 +24,18 @@ data2:
         - ./data:/data
         - ./config:/config
 
-
 queue:
     image: redis
 
-
-kb:
+kibana:
     image: kibana:latest
     volumes:
         - ./config:/config
     ports:
-        - "5601:5601"
+        - 5601:5601
     links:
         - client
     command: /opt/kibana/bin/kibana --config /config/kibana.yml
-
 
 
 ls_input:
