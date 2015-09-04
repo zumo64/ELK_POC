@@ -1,5 +1,5 @@
 client:
-    image: elastic
+    build: elastic
     volumes:
         - ./config:/config
     ports:
@@ -8,44 +8,38 @@ client:
         - "client:127.0.0.1"
     command: ./elasticsearch --node.client true --http.enabled true
 
-
-
 data1:
-    image: elastic
+    build: elastic
     links:
         - client
     volumes:
         - ./data:/data
         - ./config:/config
-
 
 data2:
-    image: elastic
+    build: elastic
     links:
         - client
     volumes:
         - ./data:/data
         - ./config:/config
-
 
 queue:
     image: redis
 
-
-kb:
+kibana:
     image: kibana:latest
     volumes:
         - ./config:/config
     ports:
-        - "5601:5601"
+        - 5601:5601
     links:
         - client
     command: /opt/kibana/bin/kibana --config /config/kibana.yml
 
 
-
 ls_input:
-    image: logstash
+    build: logstash
     links:
       - queue
     ports:
@@ -56,7 +50,7 @@ ls_input:
         ./logstash --config /config/logstash-input.conf
 
 ls_output:
-    image: logstash
+    build: logstash
     links:
       - queue
       - client

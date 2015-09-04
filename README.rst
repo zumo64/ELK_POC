@@ -8,7 +8,7 @@ Setup
 
 Assuming you have working ``docker`` with ``docker-compose``, run::
 
-    docker build -t elastic elastic
+    docker-compose build
     docker-compose up
 
 This will start a data node and a client node and publish the client node's
