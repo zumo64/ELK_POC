@@ -65,3 +65,54 @@ Elastic
 --------
 The current setup uses 3 data nodes docker services : client, data1, data2
 The client  service is started as a client node or as a data node if a  Marvel console is required. (Can't marvel on a client node)
+
+
+JMeter
+-------
+Look Diagram in jmeter/JMeterELKArchitectureDoc.png
+
+build the jmeter container :
+ docker-compose build -t jmeter jmeter
+
+ES target instance:
+Start the target ES instance (the instance we are testing) 
+on my setup its a ES 1.7.1 on bare metal.
+Set it so it sends marvel data back to the jmeter docker instance :
+marvel.agent.exporter.es.hosts: ["http://marvel_export:password@192.168.99.100:9200"]
+ 
+JMeter container
+config is elastic-monitor.yml
+
+launch from compose:
+docker-compose -f jmeter-compose.yml up
+
+The container runs a JMETER server instance  and a ES node, with marvel monitoring the target ES instance (on bare metal)
+
+
+JMeter GUI Controller 
+install Jmeter on the mac . Modify Jmeter.properties with the followinf setting:
+remote_hosts=192.168.99.100:30000
+
+1. put the following jars in Jmeter/lib 
+lucene-analyzers-common-4.10.4.jar
+lucene-core-4.10.4.jar
+elasticsearch-1.7.1.jar
+elasticsearch-shield-1.3.2.jar
+
+2. in jmeter/lib/ext
+jmeter-elasticsearch.jar
+
+3.Start Jmeter GUI
+4. open test1.jmx 
+5. start  test
+  it should FAIL as the ES listener not connecting to the ES docker instance. 
+  ( working on that as on Monday 14/09) 
+  
+6. Start remote test
+it should fail as well as the jars have not been copied in the docker jmeter image
+(TODO that and test connection)  
+
+
+
+
+
