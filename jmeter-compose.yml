@@ -1,0 +1,55 @@
+client:
+    image: elastic
+    volumes:
+        - ./data:/data
+        - ./config:/config
+        - ./snapshots:/snapshots
+    ports:
+        - 9200:9200
+    extra_hosts:
+        - "client:127.0.0.1"
+    command: ./elasticsearch  --http.enabled true -Des.config=/data/elastic-monitor.yml
+
+    
+# logstash:
+#     image: logstash
+#     links:
+#       - client
+#     volumes:
+#         - ./config:/config
+
+
+# kb:
+#     image: kibana:latest
+#     volumes:
+#         - ./config:/config
+#     ports:
+#         - "5601:5601"
+#     links:
+#         - client
+#     command: /opt/kibana/bin/kibana --config /config/kibana.yml
+
+
+jmeter1:
+    image: jmeter
+    net: "host"
+    dns:
+      - 8.8.8.8
+    command: apache-jmeter-2.13/bin/jmeter -s -j jmeter-server.log -Dserver.rmi.localhostname=192.168.99.100 -Dserver.rmi.localport=40000 -Dserver_port=30000 -Djava.rmi.server.hostname=192.168.99.100
+    
+
+      
+      
+      
+# jmeter2:
+#     image: jmeter
+#     environment:
+#       - RMI_LOCALPORT=40001
+#       - SERVER_PORT 30001
+#     ports:
+#       - 30001:30001
+#     net: "host"
+#     dns:
+#       - 8.8.8.8
+#     command: apache-jmeter-2.13/bin/jmeter -s -j jmeter-server.log -Dserver.rmi.localhostname=192.168.99.100 -Dserver.rmi.localport=40001 -Dserver_port=30001 -Djava.rmi.server.hostname=192.168.99.100
+
