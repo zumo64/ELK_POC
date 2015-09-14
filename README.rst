@@ -71,16 +71,26 @@ JMeter
 -------
 Look Diagram in jmeter/JMeterELKArchitectureDoc.png
 
+A Jmeter GUI (the controller)
+
+in blue the docker container with 3 services :
+-jmeter server
+-ES for monitoring and Jmeter results analysis
+-Kibana for visualization
+
+A target ES 1.7.1 instance , on bare metal, sending marvel data to the ES instance in docker 
+
+Procedure :
 build the jmeter container :
  docker-compose build -t jmeter jmeter
 
-ES target instance:
+bare metal ES target instance:
 Start the target ES instance (the instance we are testing) 
-on my setup its a ES 1.7.1 on bare metal.
+on my setup its a ES 1.7.1 on bare metal, no shield, just the marvel plugin
 Set it so it sends marvel data back to the jmeter docker instance :
 marvel.agent.exporter.es.hosts: ["http://marvel_export:password@192.168.99.100:9200"]
  
-JMeter container
+Setup the JMeter container:
 config is elastic-monitor.yml
 
 launch from compose:
