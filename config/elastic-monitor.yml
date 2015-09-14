@@ -1,4 +1,9 @@
-cluster.name: elk_poc_cluster2
+cluster.name: elk_poc_jmeter_cluster
+
+
+# Set a custom port for the node to node communication (9300 by default):
+#
+transport.tcp.port: 9300
 
 
 path:
@@ -23,8 +28,9 @@ shield:
 script:
   inline: on
   indexed: on
+  
+marvel.agent.enabled: false
 
-marvel.agent.exporter.es.hosts: [ "http://marvel_export:password@client:9200" ]
 
 http:
   enabled: false

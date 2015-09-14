@@ -3,12 +3,12 @@ client:
     volumes:
         - ./data:/data
         - ./config:/config
-        - ./snapshots:/snapshots
     ports:
         - 9200:9200
+        - 9300:9300
     extra_hosts:
         - "client:127.0.0.1"
-    command: ./elasticsearch  --http.enabled true -Des.config=/data/elastic-monitor.yml
+    command: ./elasticsearch  --http.enabled true -Des.config=/config/elastic-monitor.yml
 
     
 # logstash:
@@ -33,9 +33,11 @@ client:
 jmeter1:
     image: jmeter
     net: "host"
+    volumes:
+        - ./load-test:/load-test
     dns:
       - 8.8.8.8
-    command: apache-jmeter-2.13/bin/jmeter -s -j jmeter-server.log -Dserver.rmi.localhostname=192.168.99.100 -Dserver.rmi.localport=40000 -Dserver_port=30000 -Djava.rmi.server.hostname=192.168.99.100
+    command: apache-jmeter-2.13/bin/jmeter -s -j /load-test/jmeter-server.log -Dserver.rmi.localhostname=192.168.99.100 -Dserver.rmi.localport=40000 -Dserver_port=30000 -Djava.rmi.server.hostname=192.168.99.100
     
 
       
