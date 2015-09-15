@@ -1,28 +1,18 @@
 client:
-    build: elastic
-    volumes:
-        - ./config:/config
-    ports:
-        - 9200:9200
-    extra_hosts:
-        - "client:127.0.0.1"
-    command: ./elasticsearch --node.client true --http.enabled true
-
-data1:
-    build: elastic
-    links:
-        - client
-    volumes:
-        - ./data:/data
-        - ./config:/config
+    extends:
+      file: common.yml
+      service: client
 
 data2:
-    build: elastic
-    links:
-        - client
-    volumes:
-        - ./data:/data
-        - ./config:/config
+    extends:
+      file: common.yml
+      service: data
+
+data1:
+    extends:
+      file: common.yml
+      service: data
+
 
 queue:
     image: redis
