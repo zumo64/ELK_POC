@@ -1,48 +1,48 @@
+# main ES cluster
 client:
-    image: elastic
-    volumes:
-        - ./data:/data
-        - ./config:/config
+    extends:
+      file: common.yml
+      service: client
     ports:
-        - 9200:9200
         - 9300:9300
-    extra_hosts:
-        - "client:127.0.0.1"
-    command: ./elasticsearch  --http.enabled true -Des.config=/config/elastic-monitor.yml
+    links:
+      - marvel
+    command: ./elasticsearch --node.client true --marvel.agent.exporter.es.hosts "http://marvel_export:password@marvel:9200"
 
-    
-# logstash:
-#     image: logstash
-#     links:
-#       - client
-#     volumes:
-#         - ./config:/config
+data2:
+    extends:
+      file: common.yml
+      service: data
+    links:
+      - marvel
+    command: ./elasticsearch --marvel.agent.exporter.es.hosts "http://marvel_export:password@marvel:9200"
+
+data1:
+    extends:
+      file: common.yml
+      service: data
+    links:
+      - marvel
+    command: ./elasticsearch --marvel.agent.exporter.es.hosts "http://marvel_export:password@marvel:9200"
+
+# marvel ES cluster
+marvel:
+    extends:
+      file: common.yml
+      service: data
+    ports:
+        - 9201:9200
+    command: ./elasticsearch --marvel.agent.enabled false --cluster.name marvel
 
 
-# kb:
-#     image: kibana:latest
-#     volumes:
-#         - ./config:/config
-#     ports:
-#         - "5601:5601"
-#     links:
-#         - client
-#     command: /opt/kibana/bin/kibana --config /config/kibana.yml
-
-
+# jMeter instances
 jmeter1:
     image: jmeter
-    net: "host"
     volumes:
         - ./load-test:/load-test
-    dns:
-      - 8.8.8.8
-    command: apache-jmeter-2.13/bin/jmeter -s -j /load-test/jmeter-server.log -Dserver.rmi.localhostname=192.168.99.100 -Dserver.rmi.localport=40000 -Dserver_port=30000 -Djava.rmi.server.hostname=192.168.99.100
-    
+    ports:
+      - 1099:1099
 
-      
-      
-      
 # jmeter2:
 #     image: jmeter
 #     environment:

@@ -17,4 +17,6 @@ VOLUME /load-test
 EXPOSE 1099
 
 WORKDIR /opt/apache-jmeter/bin
+
+ENTRYPOINT ["./jmeter", "-s"]
 #CMD ./jmeter -s -j jmeter-server.log #-Dserver.rmi.localhostname=${RMI_LOCALHOSTNAME} -Dserver.rmi.localport=${RMI_LOCALPORT} #-Dserver_port=${SERVER_PORT} -Djava.rmi.server.hostname=${RMI_LOCALHOSTNAME}
