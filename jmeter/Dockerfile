@@ -1,23 +1,20 @@
-# Jmeter
-#
-# VERSION	0.0.1
-
-FROM	ubuntu:12.04
-MAINTAINER Jinuk Baek <kuniz37@gmail.com>
+FROM java:8-jre
 
 RUN apt-get update
+RUN apt-get install -y wget
 
-RUN apt-get install -y curl
-RUN apt-get install -y wget openjdk-6-jre openjdk-6-jre-headless
+ENV JM_VERSION 2.13
 
-RUN wget http://archive.apache.org/dist/jmeter/binaries/apache-jmeter-2.13.tgz
-RUN tar xf apache-jmeter-2.13.tgz
+WORKDIR /opt
 
-COPY jmeter-elasticsearch.jar /apache-jmeter-2.13/lib/ext/
+RUN wget -O - http://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JM_VERSION}.tgz | tar xzf -
+RUN mv /opt/apache-jmeter-${JM_VERSION} /opt/apache-jmeter
 
-CMD echo 0 > /proc/sys/net/ipv6/bindv6only
+COPY jmeter-elasticsearch.jar /opt/apache-jmeter/lib/ext/
 
 VOLUME /load-test
 
 EXPOSE 1099
-#CMD apache-jmeter-2.13/bin/jmeter -s -j jmeter-server.log #-Dserver.rmi.localhostname=${RMI_LOCALHOSTNAME} -Dserver.rmi.localport=${RMI_LOCALPORT} #-Dserver_port=${SERVER_PORT} -Djava.rmi.server.hostname=${RMI_LOCALHOSTNAME}
+
+WORKDIR /opt/apache-jmeter/bin
+#CMD ./jmeter -s -j jmeter-server.log #-Dserver.rmi.localhostname=${RMI_LOCALHOSTNAME} -Dserver.rmi.localport=${RMI_LOCALPORT} #-Dserver_port=${SERVER_PORT} -Djava.rmi.server.hostname=${RMI_LOCALHOSTNAME}
