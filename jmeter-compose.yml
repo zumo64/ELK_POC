@@ -35,13 +35,29 @@ marvel:
     command: ./elasticsearch --marvel.agent.enabled false --cluster.name marvel
 
 
-# jMeter instances
+# jMeter servers
 jmeter1:
+    build: jmeter
+    links:
+      - client
+
+jmeter2:
+    build: jmeter
+    links:
+      - client
+
+jmeter_client:
     build: jmeter
     volumes:
         - ./load-test:/load-test
-    ports:
-      - 1099:1099
+    links:
+      - client
+      - jmeter1
+      - jmeter2
+    command: sh -c "sleep 20; ./jmeter -n -t /load-test/test1.jmx -R jmeter1,jmeter2"
+
+
+
 
 # jmeter2:
 #     image: jmeter

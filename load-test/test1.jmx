@@ -50,7 +50,7 @@
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.domain">192.168.1.19</stringProp>
+          <stringProp name="HTTPSampler.domain">client</stringProp>
           <stringProp name="HTTPSampler.port">9200</stringProp>
           <stringProp name="HTTPSampler.connect_timeout"></stringProp>
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
@@ -115,7 +115,7 @@
             <collectionProp name="Arguments.arguments">
               <elementProp name="clusterName" elementType="Argument">
                 <stringProp name="Argument.name">clusterName</stringProp>
-                <stringProp name="Argument.value">elk_poc_jmeter_cluster</stringProp>
+                <stringProp name="Argument.value">elk_poc_cluster</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
               <elementProp name="userPass" elementType="Argument">
@@ -125,7 +125,7 @@
               </elementProp>
               <elementProp name="elasticsearchCluster" elementType="Argument">
                 <stringProp name="Argument.name">elasticsearchCluster</stringProp>
-                <stringProp name="Argument.value">192.168.99.100:9300</stringProp>
+                <stringProp name="Argument.value">client:9300</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
               <elementProp name="indexName" elementType="Argument">
@@ -157,6 +157,18 @@
           </elementProp>
           <stringProp name="classname">co.elastic.jmeter.elasticsearch.ElasticSearchBackendListenerClient</stringProp>
         </BackendListener>
+        <hashTree/>
+        <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager" enabled="true">
+          <collectionProp name="AuthManager.auth_list">
+            <elementProp name="" elementType="Authorization">
+              <stringProp name="Authorization.url">http://client:9200</stringProp>
+              <stringProp name="Authorization.username">es_admin</stringProp>
+              <stringProp name="Authorization.password">password</stringProp>
+              <stringProp name="Authorization.domain"></stringProp>
+              <stringProp name="Authorization.realm"></stringProp>
+            </elementProp>
+          </collectionProp>
+        </AuthManager>
         <hashTree/>
       </hashTree>
     </hashTree>
