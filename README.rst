@@ -12,7 +12,7 @@ Assuming you have working ``docker`` with ``docker-compose``, run::
     docker-compose up
 
 This will start a data node and a client node and publish the client node's
-9200 port. The data nodes are not running http transport.
+9200 port.
 
 Configuration
 -------------

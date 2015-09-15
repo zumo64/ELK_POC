@@ -21,8 +21,7 @@ script:
   inline: on
   indexed: on
 
-marvel.agent.exporter.es.hosts: [ "http://marvel_export:password@client:9200" ]
+marvel.agent.exporter.es.hosts: [ "http://marvel_export:password@127.0.0.1:9200" ]
 
 http:
-  enabled: false
   cors.enabled: true
