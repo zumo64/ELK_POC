@@ -43,6 +43,7 @@ and ``config/logstash-input.conf``.
 
 Kibana
 ------
+
 Kibana credentials  are kibana/password
 
 
@@ -63,69 +64,26 @@ trigger the watch.
 
 Elastic
 --------
-The current setup uses 3 data nodes docker services : client, data1, data2
-The client  service is started as a client node or as a data node if a  Marvel console is required. (Can't marvel on a client node)
+
+The current setup uses 3 docker services : client, data1, data2
 
 
 JMeter
 -------
-Look Diagram in jmeter/JMeterELKArchitectureDoc.png
 
-A Jmeter GUI (the controller)
+JMeter can be run from docker as well. In ``jmeter-compose.yml`` you can find
+an example that will run:
 
-in blue the docker container with 3 services :
--jmeter server
--ES for monitoring and Jmeter results analysis
--Kibana for visualization
+1. an es cluster for marvel (1 node)
 
-A target ES 1.7.1 instance , on bare metal, sending marvel data to the ES instance in docker 
+2. elasticsearch cluster (client and 2 data nodes), shipping marvel data to marvel cluster
 
-Procedure :
-build the jmeter container :
- docker-compose build -t jmeter jmeter
+3. two jmeter servers
 
-bare metal ES target instance:
-Start the target ES instance (the instance we are testing) 
-on my setup its a ES 1.7.1 on bare metal, no shield, just the marvel plugin
-Set it so it sends marvel data back to the jmeter docker instance :
-marvel.agent.exporter.es.hosts: ["http://marvel_export:password@192.168.99.100:9200"]
- 
-Setup the JMeter container:
-config is elastic-monitor.yml
+4. jmeter client
 
-launch from compose:
-docker-compose -f jmeter-compose.yml up
-
-The container runs a JMETER server instance  and a ES node, with marvel monitoring the target ES instance (on bare metal)
-
-
-JMeter GUI Controller 
-install Jmeter on the mac . Modify Jmeter.properties with the followinf setting:
-remote_hosts=192.168.99.100:30000
-
-1. put the following jars in Jmeter/lib 
-lucene-analyzers-common-4.10.4.jar
-lucene-core-4.10.4.jar
-elasticsearch-1.7.1.jar
-elasticsearch-shield-1.3.2.jar
-
-2. in jmeter/lib/ext
-jmeter-elasticsearch.jar
-This is a jar containing the backend Listener that sends results to ES
-the listener is taken from http://theworkaholic.blogspot.fr/2015/05/graphs-for-jmeter-using-elasticsearch.html
-with a small modif on the connection (added clustername)
-
-3.Start Jmeter GUI
-4. open test1.jmx 
-5. start  test
-  it should FAIL as the ES listener not connecting to the ES docker instance. 
-  ( working on that as on Monday 14/09) 
-  
-6. Start remote test
-it should fail as well as the jars have not been copied in the docker jmeter image
-(TODO that and test connection)  
-
-
-
-
+The jmeter client will start, wait for 20 seconds to give the clusters some
+time to come up and then run the test in ``load-test/test1.jmx`` on the two
+servers. The test is configured to work with shield and will log the results
+into the cluster itself.
 
