@@ -111,6 +111,9 @@ elasticsearch-shield-1.3.2.jar
 
 2. in jmeter/lib/ext
 jmeter-elasticsearch.jar
+This is a jar containing the backend Listener that sends results to ES
+the listener is taken from http://theworkaholic.blogspot.fr/2015/05/graphs-for-jmeter-using-elasticsearch.html
+with a small modif on the connection (added clustername)
 
 3.Start Jmeter GUI
 4. open test1.jmx 
