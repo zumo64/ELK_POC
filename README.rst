@@ -85,5 +85,5 @@ an example that will run:
 The jmeter client will start, wait for 20 seconds to give the clusters some
 time to come up and then run the test in ``load-test/test1.jmx`` on the two
 servers. The test is configured to work with shield and will log the results
-into the cluster itself.
+into the marvel cluster.
 

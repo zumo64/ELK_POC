@@ -3,8 +3,6 @@ client:
     extends:
       file: common.yml
       service: client
-    ports:
-        - 9300:9300
     links:
       - marvel
     command: ./elasticsearch --node.client true --marvel.agent.exporter.es.hosts "http://marvel_export:password@marvel:9200"
@@ -50,24 +48,11 @@ jmeter_client:
     build: jmeter
     volumes:
         - ./load-test:/load-test
+    ports:
+      - 4445
     links:
-      - client
+      - marvel
       - jmeter1
       - jmeter2
     command: sh -c "sleep 20; ./jmeter -n -t /load-test/test1.jmx -R jmeter1,jmeter2"
-
-
-
-
-# jmeter2:
-#     image: jmeter
-#     environment:
-#       - RMI_LOCALPORT=40001
-#       - SERVER_PORT 30001
-#     ports:
-#       - 30001:30001
-#     net: "host"
-#     dns:
-#       - 8.8.8.8
-#     command: apache-jmeter-2.13/bin/jmeter -s -j jmeter-server.log -Dserver.rmi.localhostname=192.168.99.100 -Dserver.rmi.localport=40001 -Dserver_port=30001 -Djava.rmi.server.hostname=192.168.99.100
 
