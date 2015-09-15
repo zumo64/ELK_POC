@@ -37,7 +37,7 @@ marvel:
 
 # jMeter instances
 jmeter1:
-    image: jmeter
+    build: jmeter
     volumes:
         - ./load-test:/load-test
     ports:
