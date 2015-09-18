@@ -83,8 +83,8 @@ public class ElasticSearchBackendListenerClient extends
 		map.put("StartTime", new Date(result.getStartTime()));
 		map.put("EndTime", new Date(result.getEndTime()));
 		
-		UUID idOne = UUID.randomUUID();
-		map.put("RunId", idOne);
+		
+		map.put("RunId", runId);
 			
 		
 		
@@ -149,7 +149,9 @@ public class ElasticSearchBackendListenerClient extends
 			Date now = new Date();
 			offset = now.getTime() - normalizedDate;
 		}
-		runId = context.getParameter("runId");
+		//runId = context.getParameter("runId");
+		UUID idOne = UUID.randomUUID();
+		runId = idOne.toString();
 		super.setupTest(context);
 	}
 
