@@ -31,6 +31,18 @@ marvel:
     ports:
         - 9201:9200
     command: ./elasticsearch --marvel.agent.enabled false --cluster.name marvel
+    
+    
+kibana:
+    image: kibana:latest
+    volumes:
+        - ./config:/config
+    ports:
+        - 5601:5601
+    links:
+        - marvel
+    command: /opt/kibana/bin/kibana --config /config/kibana-jmeter.yml
+
 
 
 # jMeter servers

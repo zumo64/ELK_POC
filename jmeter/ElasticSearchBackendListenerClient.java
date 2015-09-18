@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.jmeter.assertions.AssertionResult;
 import org.apache.jmeter.config.Arguments;
@@ -44,6 +45,10 @@ public class ElasticSearchBackendListenerClient extends
 
 	}
 	
+	/**
+	 * @param result
+	 * @return
+	 */
 	private Map<String, Object> getMap(SampleResult result) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String[] sampleLabels = result.getSampleLabel().split(VAR_DELIMITER);
@@ -77,8 +82,11 @@ public class ElasticSearchBackendListenerClient extends
 		map.put("NormalizedTimestamp", new Date(result.getTimeStamp() - offset));
 		map.put("StartTime", new Date(result.getStartTime()));
 		map.put("EndTime", new Date(result.getEndTime()));
-		map.put("RunId", runId);
-		//TODO assertion results
+		
+		UUID idOne = UUID.randomUUID();
+		map.put("RunId", idOne);
+			
+		
 		
 		AssertionResult[] assertions = result.getAssertionResults();
 		int count=0;
@@ -121,8 +129,6 @@ public class ElasticSearchBackendListenerClient extends
    
 		client = new TransportClient(settings);
 	
-		//client = new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress("192.168.99.100", 9300));
-		
 		
 	
 		for(String serverPort: servers) {
