@@ -1,19 +1,23 @@
-# main ES cluster
 client:
     extends:
       file: common.yml
       service: client
+    ports:
+        - 9200:9200
     links:
       - marvel
-    command: ./elasticsearch --node.client true --marvel.agent.exporter.es.hosts "http://marvel_export:password@marvel:9200"
 
+
+#main ES cluster
 data2:
     extends:
       file: common.yml
       service: data
     links:
       - marvel
-    command: ./elasticsearch --marvel.agent.exporter.es.hosts "http://marvel_export:password@marvel:9200"
+    ports:
+      - 9202:9200
+    command: ./elasticsearch --network.host _non_loopback_
 
 data1:
     extends:
@@ -21,7 +25,10 @@ data1:
       service: data
     links:
       - marvel
-    command: ./elasticsearch --marvel.agent.exporter.es.hosts "http://marvel_export:password@marvel:9200"
+    ports:
+      - 9201:9200
+    command: ./elasticsearch --network.host _non_loopback_
+
 
 # marvel ES cluster
 marvel:
@@ -29,42 +36,69 @@ marvel:
       file: common.yml
       service: data
     ports:
-        - 9201:9200
-    command: ./elasticsearch --marvel.agent.enabled false --cluster.name marvel
-    
-    
-kibana:
-    image: kibana:latest
+      - 9203:9200
+      - 9300:9300
+    command: ./elasticsearch --marvel.agent.interval -1  --cluster.name marvel --network.host _non_loopback_
+
+
+kibana_client:
+    build: kibana
     volumes:
+        - ./data:/data
         - ./config:/config
+        - ./logs:/logs
     ports:
-        - 5601:5601
+      - 5601:5601
+    links:
+        - client
+    command: /opt/kibana/bin/kibana --config /config/kibana.yml
+
+
+kibana_marvel:
+    build: kibana
+    volumes:
+        - ./data:/data
+        - ./config:/config
+        - ./logs:/logs
+    ports:
+      - 5602:5601
     links:
         - marvel
-    command: /opt/kibana/bin/kibana --config /config/kibana-jmeter.yml
+    command: /opt/kibana/bin/kibana --config /config/kibana-marvel.yml
+
 
 
 
 # jMeter servers
 jmeter1:
     build: jmeter
+    hostname: jmeter1
+    volumes:
+      - ./load-test:/load-test
     links:
       - client
+      - marvel
+    command: sh -c "./jmeter -s -J-Dsun.rmi.log.debug=true -Djava.rmi.server.hostname=jmeter1"
 
 jmeter2:
     build: jmeter
+    hostname: jmeter2
+    volumes:
+      - ./load-test:/load-test
     links:
       - client
+      - marvel
+    command: sh -c "./jmeter -s -J-Dsun.rmi.log.debug=true -Djava.rmi.server.hostname=jmeter2"
+
 
 jmeter_client:
     build: jmeter
     volumes:
-        - ./load-test:/load-test
+      - ./load-test:/load-test
     ports:
       - 4445
     links:
-      - marvel
       - jmeter1
       - jmeter2
-    command: sh -c "sleep 20; ./jmeter -n -t /load-test/test1.jmx -R jmeter1,jmeter2"
+    command: sh -c "sleep 60; ./jmeter -n -t /load-test/run_queries_and_bulk_index.jmx -JqueryThroughPut=150.0 -JindexThroughPut=2.0 -JtestRunId=T7 -R jmeter1,jmeter2"
 

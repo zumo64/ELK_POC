@@ -1,0 +1,76 @@
+################### Packetbeat Configuration Example #########################
+
+# This file contains an overview of various configuration settings. Please consult
+# the docs at https://www.elastic.co/guide/en/beats/packetbeat/current/_configuration.html
+# for more details.
+
+# The Packetbeat shipper works by sniffing the network traffic between your
+# application components. It inserts meta-data about each transaction into
+# Elasticsearch.
+
+############################# Shipper ############################################
+shipper:
+
+ # The name of the shipper that publishes the network data. It can be used to group
+ # all the transactions sent by a single shipper in the web interface.
+ # If this options is not defined, the hostname is used.
+ name:
+
+ # The tags of the shipper are included in their own field with each
+ # transaction published. Tags make it easy to group transactions by different
+ # logical properties.
+ #tags: ["service1"]
+
+ # Uncomment the following if you want to ignore transactions created
+ # by the server on which the shipper is installed. This option is useful
+ # to remove duplicates if shippers are installed on multiple servers.
+ # ignore_outgoing: true
+
+############################# Sniffer ############################################
+
+# Select the network interfaces to sniff the data. You can use the "any"
+# keyword to sniff on all connected interfaces.
+interfaces:
+ device: "any"
+
+
+############################# Protocols ######################################
+protocols:
+  
+  
+  http:
+
+    # Configure the ports where to listen for HTTP traffic. You can disable
+    # the http protocol by commenting the list of ports.
+    ports: [9200]
+    send_response: false
+    send_request: true
+ 
+
+############################# Output ############################################
+
+# Configure what outputs to use when sending the data collected by packetbeat.
+# You can enable one or multiple outputs by setting enabled option to true.
+output:
+  console:
+    pretty: true
+
+  # Elasticsearch as output
+  # Options:
+  # host, port: where Elasticsearch is listening on
+  # save_topology: specify if the topology is saved in Elasticsearch
+  # elasticsearch:
+#     enabled: true
+#     hosts: ["marvel:9200"]
+#     save_topology: true
+#     username: "es_admin"
+#     password: "password"
+#   console:
+#     pretty: true
+  # file:
+#       path: "/data/packetbeat"
+#       filename: packetbeat
+#       rotate_every_kb: 10000
+#       number_of_files: 7
+
+

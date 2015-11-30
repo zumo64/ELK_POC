@@ -1,0 +1,96 @@
+client:
+    extends:
+      file: common.yml
+      service: client
+    links:
+      - marvel
+    ports:
+      - 9200:9200
+    command: ./elasticsearch --network.host _non_loopback_ --node.client true --marvel.agent.interval -1 --http.port 9200
+
+
+#main ES cluster
+data2:
+    extends:
+      file: common.yml
+      service: data
+    links:
+      - marvel
+    ports:
+      - 9202:9200
+    command: ./elasticsearch --network.host _non_loopback_
+
+data1:
+    extends:
+      file: common.yml
+      service: data
+    links:
+      - marvel
+    ports:
+      - 9201:9200
+    command: ./elasticsearch --network.host _non_loopback_
+
+
+# marvel ES cluster
+marvel:
+    extends:
+      file: common.yml
+      service: data
+    ports:
+      - 9203:9200
+      - 9300:9300
+    command: ./elasticsearch --marvel.agent.interval -1  --cluster.name marvel --network.host _non_loopback_
+
+
+
+packetbeat:
+    build: packetbeat
+    volumes:
+        - ./data:/data
+        - ./config:/config
+        - ./logs:/logs
+    links:
+        - client
+        - marvel
+#    net: "host"
+    command: sh -c '/bin/sleep 120 && packetbeat -e'
+
+
+kibana_client:
+    build: kibana
+    volumes:
+        - ./data:/data
+        - ./config:/config
+        - ./logs:/logs
+    ports:
+      - 5601:5601
+    links:
+        - client
+    command: /opt/kibana/bin/kibana --config /config/kibana.yml
+
+
+kibana_marvel:
+    build: kibana
+    volumes:
+        - ./data:/data
+        - ./config:/config
+        - ./logs:/logs
+    ports:
+      - 5602:5601
+    links:
+        - marvel
+    command: /opt/kibana/bin/kibana --config /config/kibana-marvel.yml
+
+
+    
+# haproxy:
+#     build: haproxy
+#     ports:
+#         - 9205:9205
+#     net: "host"
+#     volumes:
+#         - ./config:/config
+#         - ./logs:/logs
+
+
+

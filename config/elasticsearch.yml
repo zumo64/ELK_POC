@@ -1,8 +1,13 @@
 cluster.name: elk_poc_cluster
 
+discovery.zen.ping.multicast.enabled: true
+
+
+
 path:
   data: /data/
   work: /data/work
+  logs: /logs
 
 
 shield:
@@ -21,7 +26,14 @@ script:
   inline: on
   indexed: on
 
-marvel.agent.exporter.es.hosts: [ "http://marvel_export:password@127.0.0.1:9200" ]
+
+marvel.agent.exporters:
+  id1:
+    type: http
+    host: ["http://marvel:9200"]
+    auth:
+      username: es_admin
+      password: password
 
 http:
   cors.enabled: true

@@ -1,0 +1,1 @@
+docker exec $1 curl -u es_admin:password -XDELETE http://elkpoc_client_1:9200/logstash

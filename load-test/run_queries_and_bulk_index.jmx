@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="2.8" jmeter="2.13 r1665067">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">-1</intProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">10</stringProp>
+        <longProp name="ThreadGroup.start_time">1316089399000</longProp>
+        <longProp name="ThreadGroup.end_time">1316089399000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager" enabled="true">
+          <collectionProp name="AuthManager.auth_list">
+            <elementProp name="" elementType="Authorization">
+              <stringProp name="Authorization.url">http://client:9200/logstash/logs/_search</stringProp>
+              <stringProp name="Authorization.username">es_admin</stringProp>
+              <stringProp name="Authorization.password">password</stringProp>
+              <stringProp name="Authorization.domain"></stringProp>
+              <stringProp name="Authorization.realm"></stringProp>
+            </elementProp>
+          </collectionProp>
+        </AuthManager>
+        <hashTree/>
+        <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="Constant Throughput Timer" enabled="true">
+          <intProp name="calcMode">2</intProp>
+          <stringProp name="throughput">${__P(queryThroughPut,100)}</stringProp>
+        </ConstantThroughputTimer>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Visualization_1" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+  &quot;size&quot;: 0,&#xd;
+  &quot;aggs&quot;: {&#xd;
+    &quot;2&quot;: {&#xd;
+      &quot;date_histogram&quot;: {&#xd;
+        &quot;field&quot;: &quot;@timestamp&quot;,&#xd;
+        &quot;interval&quot;: &quot;10m&quot;,&#xd;
+        &quot;time_zone&quot;: &quot;Europe/Berlin&quot;,&#xd;
+        &quot;min_doc_count&quot;: 1,&#xd;
+        &quot;extended_bounds&quot;: {&#xd;
+          &quot;min&quot;: 1420073843880,&#xd;
+          &quot;max&quot;: 1420116926662&#xd;
+        }&#xd;
+      }&#xd;
+    }&#xd;
+  },&#xd;
+  &quot;highlight&quot;: {&#xd;
+    &quot;pre_tags&quot;: [&#xd;
+      &quot;@kibana-highlighted-field@&quot;&#xd;
+    ],&#xd;
+    &quot;post_tags&quot;: [&#xd;
+      &quot;@/kibana-highlighted-field@&quot;&#xd;
+    ],&#xd;
+    &quot;fields&quot;: {&#xd;
+      &quot;*&quot;: {}&#xd;
+    },&#xd;
+    &quot;require_field_match&quot;: false,&#xd;
+    &quot;fragment_size&quot;: 2147483647&#xd;
+  },&#xd;
+  &quot;query&quot;: {&#xd;
+    &quot;filtered&quot;: {&#xd;
+      &quot;query&quot;: {&#xd;
+        &quot;query_string&quot;: {&#xd;
+          &quot;query&quot;: &quot;*&quot;,&#xd;
+          &quot;analyze_wildcard&quot;: true&#xd;
+        }&#xd;
+      },&#xd;
+      &quot;filter&quot;: {&#xd;
+        &quot;bool&quot;: {&#xd;
+          &quot;must&quot;: [&#xd;
+            {&#xd;
+              &quot;range&quot;: {&#xd;
+                &quot;@timestamp&quot;: {&#xd;
+                  &quot;gte&quot;: 1420073843880,&#xd;
+                  &quot;lte&quot;: 1420116926662,&#xd;
+                  &quot;format&quot;: &quot;epoch_millis&quot;&#xd;
+                }&#xd;
+              }&#xd;
+            }&#xd;
+          ],&#xd;
+          &quot;must_not&quot;: []&#xd;
+        }&#xd;
+      }&#xd;
+    }&#xd;
+  }&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">client</stringProp>
+          <stringProp name="HTTPSampler.port">9200</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
+          <stringProp name="HTTPSampler.path">/logstash/logs/_search</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.implementation">Java</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="false">
+          <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="clusterName" elementType="Argument">
+                <stringProp name="Argument.name">clusterName</stringProp>
+                <stringProp name="Argument.value">marvel</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="userPass" elementType="Argument">
+                <stringProp name="Argument.name">userPass</stringProp>
+                <stringProp name="Argument.value">es_admin:password</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="elasticsearchCluster" elementType="Argument">
+                <stringProp name="Argument.name">elasticsearchCluster</stringProp>
+                <stringProp name="Argument.value">marvel:9300</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="indexName" elementType="Argument">
+                <stringProp name="Argument.name">indexName</stringProp>
+                <stringProp name="Argument.value">jmeter-sampler</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="indexType" elementType="Argument">
+                <stringProp name="Argument.name">indexType</stringProp>
+                <stringProp name="Argument.value">samplerResults</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="dateTimeAppendFormat" elementType="Argument">
+                <stringProp name="Argument.name">dateTimeAppendFormat</stringProp>
+                <stringProp name="Argument.value">-yyyy-MM-dd</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="testRunId" elementType="Argument">
+                <stringProp name="Argument.name">testRunId</stringProp>
+                <stringProp name="Argument.value">test</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="sniff" elementType="Argument">
+                <stringProp name="Argument.name">sniff</stringProp>
+                <stringProp name="Argument.value">true</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="classname">co.elastic.jmeter.elasticsearch.ElasticSearchBackendListenerClient</stringProp>
+        </BackendListener>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">-1</intProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">5</stringProp>
+        <longProp name="ThreadGroup.start_time">1316089399000</longProp>
+        <longProp name="ThreadGroup.end_time">1316089399000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager" enabled="true">
+          <collectionProp name="AuthManager.auth_list">
+            <elementProp name="" elementType="Authorization">
+              <stringProp name="Authorization.url">http://client:9200/_bulk</stringProp>
+              <stringProp name="Authorization.username">es_admin</stringProp>
+              <stringProp name="Authorization.password">password</stringProp>
+              <stringProp name="Authorization.domain"></stringProp>
+              <stringProp name="Authorization.realm"></stringProp>
+            </elementProp>
+          </collectionProp>
+        </AuthManager>
+        <hashTree/>
+        <BSFSampler guiclass="TestBeanGUI" testclass="BSFSampler" testname="BSF Sampler : Build list of files in output folder" enabled="true">
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">File folder = new File(&quot;/load-test/output&quot;);
+File[] files = folder.listFiles();
+int counter = 1;
+for (File file : files) {
+    vars.put(&quot;file_&quot; + counter, file.getAbsolutePath());
+    counter++;
+}
+</stringProp>
+          <stringProp name="scriptLanguage">beanshell</stringProp>
+        </BSFSampler>
+        <hashTree/>
+        <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="false">
+          <boolProp name="displayJMeterProperties">true</boolProp>
+          <boolProp name="displayJMeterVariables">true</boolProp>
+          <boolProp name="displaySystemProperties">true</boolProp>
+        </DebugSampler>
+        <hashTree/>
+        <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="Constant Throughput Timer" enabled="true">
+          <intProp name="calcMode">2</intProp>
+          <stringProp name="throughput">${__P(indexThroughPut,10)}</stringProp>
+        </ConstantThroughputTimer>
+        <hashTree/>
+        <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="ForEach File" enabled="true">
+          <stringProp name="ForeachController.inputVal">file</stringProp>
+          <stringProp name="ForeachController.returnVal">current_file</stringProp>
+          <boolProp name="ForeachController.useSeparator">true</boolProp>
+          <stringProp name="ForeachController.startIndex">0</stringProp>
+          <stringProp name="ForeachController.endIndex">4</stringProp>
+        </ForeachController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Bulk_index" enabled="true">
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">${__eval(${__FileToString(${current_file},UTF-8,)})}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain">client</stringProp>
+            <stringProp name="HTTPSampler.port">9200</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
+            <stringProp name="HTTPSampler.path">/_bulk</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.implementation">Java</stringProp>
+            <boolProp name="HTTPSampler.monitor">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <com.atlantbh.jmeter.plugins.jsonutils.jsonpathassertion.JSONPathAssertion guiclass="com.atlantbh.jmeter.plugins.jsonutils.jsonpathassertion.gui.JSONPathAssertionGui" testclass="com.atlantbh.jmeter.plugins.jsonutils.jsonpathassertion.JSONPathAssertion" testname="jp@gc - JSON Path Assertion" enabled="false">
+              <stringProp name="JSON_PATH">$.errors</stringProp>
+              <stringProp name="EXPECTED_VALUE">false</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+            </com.atlantbh.jmeter.plugins.jsonutils.jsonpathassertion.JSONPathAssertion>
+            <hashTree/>
+            <com.atlantbh.jmeter.plugins.jsonutils.jsonpathextractor.JSONPathExtractor guiclass="com.atlantbh.jmeter.plugins.jsonutils.jsonpathextractor.gui.JSONPathExtractorGui" testclass="com.atlantbh.jmeter.plugins.jsonutils.jsonpathextractor.JSONPathExtractor" testname="jp@gc - JSON Path Extractor" enabled="false">
+              <stringProp name="VAR">errors</stringProp>
+              <stringProp name="JSONPATH">$.result[0].errors</stringProp>
+              <stringProp name="DEFAULT">0</stringProp>
+              <stringProp name="VARIABLE">errors</stringProp>
+              <stringProp name="SUBJECT">VAR</stringProp>
+            </com.atlantbh.jmeter.plugins.jsonutils.jsonpathextractor.JSONPathExtractor>
+            <hashTree/>
+          </hashTree>
+          <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="false">
+            <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="clusterName" elementType="Argument">
+                  <stringProp name="Argument.name">clusterName</stringProp>
+                  <stringProp name="Argument.value">marvel</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="userPass" elementType="Argument">
+                  <stringProp name="Argument.name">userPass</stringProp>
+                  <stringProp name="Argument.value">es_admin:password</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="elasticsearchCluster" elementType="Argument">
+                  <stringProp name="Argument.name">elasticsearchCluster</stringProp>
+                  <stringProp name="Argument.value">marvel:9300</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="indexName" elementType="Argument">
+                  <stringProp name="Argument.name">indexName</stringProp>
+                  <stringProp name="Argument.value">jmeter-sampler</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="indexType" elementType="Argument">
+                  <stringProp name="Argument.name">indexType</stringProp>
+                  <stringProp name="Argument.value">samplerResults</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="dateTimeAppendFormat" elementType="Argument">
+                  <stringProp name="Argument.name">dateTimeAppendFormat</stringProp>
+                  <stringProp name="Argument.value">-yyyy-MM-dd</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="testRunId" elementType="Argument">
+                  <stringProp name="Argument.name">testRunId</stringProp>
+                  <stringProp name="Argument.value">test</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="sniff" elementType="Argument">
+                  <stringProp name="Argument.name">sniff</stringProp>
+                  <stringProp name="Argument.value">true</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="classname">co.elastic.jmeter.elasticsearch.ElasticSearchBackendListenerClient</stringProp>
+          </BackendListener>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

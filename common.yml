@@ -3,19 +3,20 @@ client:
     volumes:
         - ./data:/data
         - ./config:/config
-    ports:
-        - 9200:9200
-    command: ./elasticsearch --node.client true
+        - ./logs:/logs
+    command: ./elasticsearch --network.host _non_loopback_ --node.client true --marvel.agent.interval -1
 
 data:
     build: elastic
     volumes:
         - ./data:/data
         - ./config:/config
+        - ./logs:/logs
 
 master:
     build: elastic
     volumes:
         - ./data:/data
         - ./config:/config
+        - ./logs:/logs
     command: ./elasticsearch --node.data false --node.master true

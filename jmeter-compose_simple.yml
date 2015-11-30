@@ -1,0 +1,81 @@
+client:
+    extends:
+      file: common.yml
+      service: client
+    ports:
+        - 9200:9200
+    links:
+      - marvel
+
+
+# main ES cluster
+data2:
+    extends:
+      file: common.yml
+      service: data
+    links:
+      - marvel
+    ports:
+      - 9202:9200
+    command: ./elasticsearch --network.host _non_loopback_
+
+data1:
+    extends:
+      file: common.yml
+      service: data
+    links:
+      - marvel
+    ports:
+      - 9201:9200
+    command: ./elasticsearch --network.host _non_loopback_
+
+
+# marvel ES cluster
+marvel:
+    extends:
+      file: common.yml
+      service: data
+    ports:
+      - 9203:9200
+      - 9300:9300
+    command: ./elasticsearch --marvel.agent.interval -1  --cluster.name marvel --network.host _non_loopback_
+
+
+
+
+
+# jMeter servers
+jmeter1:
+    build: jmeter
+    volumes:
+      - ./load-test:/load-test
+    ports:
+      - 1099
+      - 4445
+    # links:
+    #   - client
+    command: sh -c "sleep 50;./jmeter -s"
+
+jmeter2:
+    build: jmeter
+    volumes:
+      - ./load-test:/load-test
+    ports:
+      - 1099
+      - 4445
+    # links:
+    #   - client
+    command: sh -c "sleep 50;./jmeter -s"
+
+
+jmeter-client:
+    build: jmeter
+    volumes:
+      - ./load-test:/load-test
+    ports:
+      - 4445
+    links:
+      - client
+      - jmeter1
+      - jmeter2
+    command: sh -c "sleep 60; ./jmeter -n -t /load-test/dev_run_queries_and_bulk_index.jmx -JqueryThroughPut=1.0 -JindexThroughPut=2.0 -JtestRunId=T7 -R jmeter1"
