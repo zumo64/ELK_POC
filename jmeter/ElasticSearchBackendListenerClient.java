@@ -1,48 +1,55 @@
 package co.elastic.jmeter.elasticsearch;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
+import org.apache.jmeter.util.JMeterUtils;
 import org.apache.jmeter.assertions.AssertionResult;
 import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.visualizers.backend.AbstractBackendListenerClient;
 import org.apache.jmeter.visualizers.backend.BackendListenerContext;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.shield.ShieldPlugin;
 
-public class ElasticSearchBackendListenerClient extends
-		AbstractBackendListenerClient {
+
+public class ElasticSearchBackendListenerClient extends AbstractBackendListenerClient {
+	
 	private Client client; 
 	private String indexName;
 	private String dateTimeAppendFormat;
-	private String sampleType;
-	private String runId;
-	private long offset;
+	private String indexType;
+	private String testRunId;
+	
 	private static final int DEFAULT_ELASTICSEARCH_PORT = 9300;
-	private static final String TIMESTAMP = "timestamp";
 	private static final String VAR_DELIMITER = "~";
-	private static final String VALUE_DELIMITER = "=";
+	
+	
 	@Override
 	public void handleSampleResults(List<SampleResult> results,
 			BackendListenerContext context) {
+		
 		String indexNameToUse = indexName;
+		
 		for(SampleResult result : results) {
 			Map<String,Object> jsonObject = getMap(result);
 			if(dateTimeAppendFormat != null) {
 				SimpleDateFormat sdf = new SimpleDateFormat(dateTimeAppendFormat);
-				indexNameToUse = indexName + sdf.format(jsonObject.get(TIMESTAMP));
+				indexNameToUse = indexName + sdf.format(jsonObject.get("@timestamp"));
 			}
-			client.prepareIndex(indexNameToUse, sampleType).setSource(jsonObject).execute().actionGet();					
+			System.out.println("RUN ID" + testRunId + " "+ indexNameToUse);
+			client.prepareIndex(indexNameToUse, indexType).setSource(jsonObject).execute().actionGet();
+			System.out.println("Indexed ");
 		}
-
+		
 	}
 	
 	/**
@@ -51,41 +58,29 @@ public class ElasticSearchBackendListenerClient extends
 	 */
 	private Map<String, Object> getMap(SampleResult result) {
 		Map<String, Object> map = new HashMap<String, Object>();
+		
 		String[] sampleLabels = result.getSampleLabel().split(VAR_DELIMITER);
-		map.put("SampleLabel", sampleLabels[0]);
-		for(int i=1;i<sampleLabels.length;i++) {
-			String[] varNameAndValue =sampleLabels[i].split(VALUE_DELIMITER);
-			map.put(varNameAndValue[0], varNameAndValue[1]);
-		}
 		
-		map.put("ResponseTime", result.getTime());
-		map.put("ElapsedTime", result.getTime());
-		map.put("ResponseCode", result.getResponseCode());
-		map.put("ResponseMessage", result.getResponseMessage());
-		map.put("ThreadName", result.getThreadName());
-		map.put("DataType", result.getDataType());
-		map.put("Success", String.valueOf(result.isSuccessful()));
-		//map.put("FailureMessage", result.get);
-		map.put("GrpThreads", result.getGroupThreads());
-		map.put("AllThreads", result.getAllThreads());
-		map.put("URL", result.getUrlAsString());
-		map.put("Latency", result.getLatency());
-		map.put("ConnectTime", result.getConnectTime());
-		map.put("SampleCount", result.getSampleCount());
-		map.put("ErrorCount", result.getErrorCount());
-		map.put("Bytes", result.getBytes());
-		map.put("BodySize", result.getBodySize());
-		map.put("ContentType", result.getContentType());
-		//map.put("HostName", result.get);
-		map.put("IdleTime", result.getIdleTime());
-		map.put(TIMESTAMP, new Date(result.getTimeStamp()));
-		map.put("NormalizedTimestamp", new Date(result.getTimeStamp() - offset));
-		map.put("StartTime", new Date(result.getStartTime()));
-		map.put("EndTime", new Date(result.getEndTime()));
+		map.put("bodySize", result.getBodySize());
+		map.put("bytes", result.getBytes());
+		map.put("contentType", result.getContentType());
+		map.put("dataType", result.getDataType());
+		map.put("sampleTime", result.getTime());
+		map.put("responseCode", result.getResponseCode());
+		map.put("latency", result.getLatency());
+		map.put("responseMessage", result.getResponseMessage());
+	
+		map.put("sampleCount", result.getSampleCount());
+		map.put("sampleLabel", sampleLabels[0]);
+		map.put("threadName", result.getThreadName());
+		map.put("groupThreads", result.getGroupThreads());
+		map.put("success", String.valueOf(result.isSuccessful()));
+		map.put("url", result.getUrlAsString());
+		map.put("errorCount", result.getErrorCount());
+		map.put("idleTime", result.getIdleTime());
 		
-		
-		map.put("RunId", runId);
-			
+		map.put("testRunId", testRunId);
+		map.put("@timestamp", new Date(result.getTimeStamp()));
 		
 		
 		AssertionResult[] assertions = result.getAssertionResults();
@@ -94,13 +89,16 @@ public class ElasticSearchBackendListenerClient extends
 			Map<String,Object> [] assertionArray = new HashMap[assertions.length];
 			for(AssertionResult assertionResult : assertions) {
 				Map<String,Object> assertionMap = new HashMap<String,Object>();
-				assertionMap.put("Failure", assertionResult.isError() || assertionResult.isFailure());
-				assertionMap.put("FailureMessage", assertionResult.getFailureMessage());
-				assertionMap.put("Name", assertionResult.getName());
+				assertionMap.put("failure", assertionResult.isError() || assertionResult.isFailure());
+				assertionMap.put("failureMessage", assertionResult.getFailureMessage());
+				assertionMap.put("name", assertionResult.getName());
 				assertionArray[count++] = assertionMap;
 			}
-			map.put("Assertions", assertionArray);
+			map.put("assertions", assertionArray);
 		}
+		
+		
+			
 		return map;
 	}
 
@@ -109,7 +107,6 @@ public class ElasticSearchBackendListenerClient extends
 		// TODO Auto-generated method stub
         String elasticsearchCluster = context.getParameter("elasticsearchCluster");
         String userPass = context.getParameter("userPass");
-        
         String[] servers = elasticsearchCluster.split(",");
         
         indexName = context.getParameter("indexName");
@@ -117,19 +114,42 @@ public class ElasticSearchBackendListenerClient extends
         if(dateTimeAppendFormat!=null && dateTimeAppendFormat.trim().equals("")) {
         	dateTimeAppendFormat = null;
         }
-        sampleType = context.getParameter("sampleType");
         
+        
+        indexType = context.getParameter("indexType");
+        
+        context.getParameter("indexType");
+        
+       
+        testRunId = JMeterUtils.getPropDefault("testRunId", context.getParameter( "testRunId" ) );
+        
+  
         String clusterName = context.getParameter("clusterName");
         
-        Settings settings = ImmutableSettings.settingsBuilder()
+        Settings settings = null;
+        
+        if (userPass != null) {
+         
+        	settings = Settings.settingsBuilder()
                 .put("cluster.name", clusterName)
-                .put("client.transport.sniff", true)
+                .put("client.transport.sniff", Boolean.valueOf(context.getParameter("sniff")))
+                .put("plugin.types", "org.elasticsearch.shield.ShieldPlugin")
                 .put("shield.user", userPass)
                 .build();
-   
-		client = new TransportClient(settings);
-	
-		
+        }
+        else {
+        	settings = Settings.settingsBuilder()
+                    .put("cluster.name", clusterName)
+                    .put("client.transport.sniff", true)
+                    .build();
+        }
+  
+         client = TransportClient.builder()
+  			  .addPlugin(ShieldPlugin.class)
+  			  .settings(settings).build();
+         
+  			
+		//client = TransportClient.builder().settings(settings).build();
 	
 		for(String serverPort: servers) {
 			String[] serverAndPort = serverPort.split(":");
@@ -137,22 +157,13 @@ public class ElasticSearchBackendListenerClient extends
 			if(serverAndPort.length == 2) {
 				port = Integer.parseInt(serverAndPort[1]);
 			}
-			((TransportClient)client).addTransportAddress(new InetSocketTransportAddress(serverAndPort[0], port));
+			
+			((TransportClient)client).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(serverAndPort[0]), port));
 		}
 		
 		
-		String normalizedTime = context.getParameter("normalizedTime");
-		if(normalizedTime != null && normalizedTime.trim().length() > 0 ){
-			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSX");
-			Date d = sdf2.parse(normalizedTime);
-			long normalizedDate = d.getTime();
-			Date now = new Date();
-			offset = now.getTime() - normalizedDate;
-		}
-		//runId = context.getParameter("runId");
-		UUID idOne = UUID.randomUUID();
-		runId = idOne.toString();
 		super.setupTest(context);
+		System.out.println("Elastic jmeter backend listener ready !");
 	}
 
 	@Override
@@ -160,17 +171,13 @@ public class ElasticSearchBackendListenerClient extends
         Arguments arguments = new Arguments();
         arguments.addArgument("clusterName", "elasticsearch");
         arguments.addArgument("userPass", "");
-        arguments.addArgument("elasticsearchCluster", "localhost:" + DEFAULT_ELASTICSEARCH_PORT);
-        arguments.addArgument("indexName", "jmeter-elasticsearch");
-        arguments.addArgument("sampleType", "SampleResult");
-        arguments.addArgument("dateTimeAppendFormat", "-yyyy-MM-DD");
-        arguments.addArgument("normalizedTime","2015-01-01 00:00:00.000-00:00");
-        arguments.addArgument("runId", "${__UUID()}");
-        //arguments.addArgument("summaryOnly", "true");
-        //arguments.addArgument("samplersList", "");
+        arguments.addArgument("elasticsearchCluster", "localhost:9300");
+        arguments.addArgument("indexName", "jmeter-sampler");
+        arguments.addArgument("indexType", "samplerResults");
+        arguments.addArgument("dateTimeAppendFormat", "-yyyy-MM-dd");
+        arguments.addArgument("testRunId", "test_0");
+        arguments.addArgument("sniff", "true");
         return arguments;
-
-
 	}
 
 	@Override

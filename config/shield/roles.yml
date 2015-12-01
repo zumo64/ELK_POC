@@ -1,21 +1,32 @@
 admin:
   cluster: all
   indices:
-    '*': all
+    '*':
+       privileges: all
+
+# Defines the required permissions for transport clients
+transport_client:
+  cluster:
+    - cluster:monitor/nodes/liveness
+    - cluster:monitor/state
 
 watcher_admin:
     cluster: manage_watcher
+
 
 marvel_agent:
   cluster: indices:admin/template/get, indices:admin/template/put
   indices:
     '.marvel-*': indices:data/write/bulk, create_index
 
+
 marvel_user:
   cluster: cluster:monitor/nodes/info, cluster:admin/plugin/license/get
   indices:
-    '.marvel-*': all
-    
+    '.marvel-*':
+      privileges: all
+
+
 kibana4:
   cluster:
       - cluster:monitor/nodes/info

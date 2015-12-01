@@ -48,6 +48,17 @@
                 "latency": {
                     "type": "long"
                 },
+                "metric": {
+                    "properties": {
+                        "name": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "integer"
+                        }
+                    }
+                },
                 "responseCode": {
                     "index": "not_analyzed",
                     "type": "string"
