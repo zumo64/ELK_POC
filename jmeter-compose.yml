@@ -35,6 +35,7 @@ marvel:
     extends:
       file: common.yml
       service: data
+    hostname: marvel
     ports:
       - 9203:9200
       - 9300:9300
@@ -67,8 +68,6 @@ kibana_marvel:
     command: /opt/kibana/bin/kibana --config /config/kibana-marvel.yml
 
 
-
-
 # jMeter servers
 jmeter1:
     build: jmeter
@@ -78,7 +77,7 @@ jmeter1:
     links:
       - client
       - marvel
-    command: sh -c "./jmeter -s -J-Dsun.rmi.log.debug=true -Djava.rmi.server.hostname=jmeter1"
+    command: sh -c "./jmeter -s -Djava.rmi.server.hostname=jmeter1"
 
 jmeter2:
     build: jmeter
@@ -88,7 +87,7 @@ jmeter2:
     links:
       - client
       - marvel
-    command: sh -c "./jmeter -s -J-Dsun.rmi.log.debug=true -Djava.rmi.server.hostname=jmeter2"
+    command: sh -c "./jmeter -s -Djava.rmi.server.hostname=jmeter2"
 
 
 jmeter_client:
@@ -100,5 +99,7 @@ jmeter_client:
     links:
       - jmeter1
       - jmeter2
-    command: sh -c "sleep 60; ./jmeter -n -t /load-test/run_queries_and_bulk_index.jmx -JqueryThroughPut=150.0 -JindexThroughPut=2.0 -JtestRunId=T7 -R jmeter1,jmeter2"
+      - marvel
+      - client
+    command: sh -c "sleep 120; ./jmeter -n -t /load-test/run_queries_and_bulk_index.jmx -JqueryThroughPut=150.0 -JindexThroughPut=2.0 -JtestRunId=T8 -R jmeter1,jmeter2"
 
