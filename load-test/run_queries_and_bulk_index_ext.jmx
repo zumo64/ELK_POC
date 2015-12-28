@@ -17,7 +17,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.num_threads">2</stringProp>
         <stringProp name="ThreadGroup.ramp_time">10</stringProp>
         <longProp name="ThreadGroup.start_time">1316089399000</longProp>
         <longProp name="ThreadGroup.end_time">1316089399000</longProp>
@@ -29,7 +29,7 @@
         <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager" enabled="true">
           <collectionProp name="AuthManager.auth_list">
             <elementProp name="" elementType="Authorization">
-              <stringProp name="Authorization.url">http://client:9200/${indexName}/${typeName}/_search</stringProp>
+              <stringProp name="Authorization.url">http://${__P(esHost,&apos;client&apos;)}:9200/${indexName}/${typeName}/_search</stringProp>
               <stringProp name="Authorization.username">es_admin</stringProp>
               <stringProp name="Authorization.password">password</stringProp>
               <stringProp name="Authorization.domain"></stringProp>
@@ -93,7 +93,100 @@
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.domain">client</stringProp>
+          <stringProp name="HTTPSampler.domain">${__P(esHost,&apos;client&apos;)}</stringProp>
+          <stringProp name="HTTPSampler.port">9200</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
+          <stringProp name="HTTPSampler.path">/${indexName}/${typeName}/_search</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.implementation">Java</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Vis_2_apachelogs" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+  &quot;size&quot;: 0,&#xd;
+  &quot;aggs&quot;: {&#xd;
+    &quot;2&quot;: {&#xd;
+      &quot;date_histogram&quot;: {&#xd;
+        &quot;field&quot;: &quot;@timestamp&quot;,&#xd;
+        &quot;interval&quot;: &quot;1m&quot;,&#xd;
+        &quot;time_zone&quot;: &quot;Europe/Berlin&quot;,&#xd;
+        &quot;min_doc_count&quot;: 1,&#xd;
+        &quot;extended_bounds&quot;: {&#xd;
+          &quot;min&quot;: 1440402513929,&#xd;
+          &quot;max&quot;: 1440406061190&#xd;
+        }&#xd;
+      },&#xd;
+      &quot;aggs&quot;: {&#xd;
+        &quot;1&quot;: {&#xd;
+          &quot;percentiles&quot;: {&#xd;
+            &quot;field&quot;: &quot;bytes&quot;,&#xd;
+            &quot;percents&quot;: [&#xd;
+              99&#xd;
+            ]&#xd;
+          }&#xd;
+        }&#xd;
+      }&#xd;
+    }&#xd;
+  },&#xd;
+  &quot;query&quot;: {&#xd;
+    &quot;filtered&quot;: {&#xd;
+      &quot;query&quot;: {&#xd;
+        &quot;query_string&quot;: {&#xd;
+          &quot;analyze_wildcard&quot;: true,&#xd;
+          &quot;query&quot;: &quot;*&quot;&#xd;
+        }&#xd;
+      },&#xd;
+      &quot;filter&quot;: {&#xd;
+        &quot;bool&quot;: {&#xd;
+          &quot;must&quot;: [&#xd;
+            {&#xd;
+              &quot;range&quot;: {&#xd;
+                &quot;@timestamp&quot;: {&#xd;
+                  &quot;gte&quot;: ${time3},&#xd;
+                  &quot;lte&quot;: ${time4},&#xd;
+                  &quot;format&quot;: &quot;epoch_millis&quot;&#xd;
+                }&#xd;
+              }&#xd;
+            }&#xd;
+          ],&#xd;
+          &quot;must_not&quot;: []&#xd;
+        }&#xd;
+      }&#xd;
+    }&#xd;
+  },&#xd;
+  &quot;highlight&quot;: {&#xd;
+    &quot;pre_tags&quot;: [&#xd;
+      &quot;@kibana-highlighted-field@&quot;&#xd;
+    ],&#xd;
+    &quot;post_tags&quot;: [&#xd;
+      &quot;@/kibana-highlighted-field@&quot;&#xd;
+    ],&#xd;
+    &quot;fields&quot;: {&#xd;
+      &quot;*&quot;: {}&#xd;
+    },&#xd;
+    &quot;require_field_match&quot;: false,&#xd;
+    &quot;fragment_size&quot;: 2147483647&#xd;
+  }&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${__P(esHost,&apos;client&apos;)}</stringProp>
           <stringProp name="HTTPSampler.port">9200</stringProp>
           <stringProp name="HTTPSampler.connect_timeout"></stringProp>
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
@@ -121,6 +214,17 @@
           <stringProp name="shareMode">shareMode.all</stringProp>
         </CSVDataSet>
         <hashTree/>
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Time intervals CSV 2" enabled="true">
+          <stringProp name="filename">/load-test/csv/input1K1h.csv</stringProp>
+          <stringProp name="fileEncoding"></stringProp>
+          <stringProp name="variableNames">time3,time4</stringProp>
+          <stringProp name="delimiter">,</stringProp>
+          <boolProp name="quotedData">false</boolProp>
+          <boolProp name="recycle">true</boolProp>
+          <boolProp name="stopThread">false</boolProp>
+          <stringProp name="shareMode">shareMode.all</stringProp>
+        </CSVDataSet>
+        <hashTree/>
         <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
             <collectionProp name="Arguments.arguments">
@@ -136,7 +240,7 @@
               </elementProp>
               <elementProp name="elasticsearchCluster" elementType="Argument">
                 <stringProp name="Argument.name">elasticsearchCluster</stringProp>
-                <stringProp name="Argument.value">marvel:9300</stringProp>
+                <stringProp name="Argument.value">marvel.elkpoc:9300</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
               <elementProp name="indexName" elementType="Argument">
@@ -188,7 +292,7 @@
         <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager" enabled="true">
           <collectionProp name="AuthManager.auth_list">
             <elementProp name="" elementType="Authorization">
-              <stringProp name="Authorization.url">http://client:9200/_bulk</stringProp>
+              <stringProp name="Authorization.url">http://${__P(esHost,&apos;client&apos;)}:9200/_bulk</stringProp>
               <stringProp name="Authorization.username">es_admin</stringProp>
               <stringProp name="Authorization.password">password</stringProp>
               <stringProp name="Authorization.domain"></stringProp>
@@ -235,7 +339,7 @@ for (File file : files) {
                 </elementProp>
               </collectionProp>
             </elementProp>
-            <stringProp name="HTTPSampler.domain">client</stringProp>
+            <stringProp name="HTTPSampler.domain">${__P(esHost,&apos;client&apos;)}</stringProp>
             <stringProp name="HTTPSampler.port">9200</stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
@@ -284,7 +388,7 @@ for (File file : files) {
                 </elementProp>
                 <elementProp name="elasticsearchCluster" elementType="Argument">
                   <stringProp name="Argument.name">elasticsearchCluster</stringProp>
-                  <stringProp name="Argument.value">marvel:9300</stringProp>
+                  <stringProp name="Argument.value">marvel.elkpoc:9300</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
                 <elementProp name="indexName" elementType="Argument">

@@ -1,36 +1,36 @@
 client:
+    container_name: client
     extends:
       file: common.yml
       service: client
     ports:
         - 9200:9200
-    links:
-      - marvel
-
+        - 22:22
 
 #main ES cluster
 data2:
+    container_name: data2
     extends:
       file: common.yml
       service: data
-    links:
-      - marvel
     ports:
       - 9202:9200
+      - 22:22
     command: ./elasticsearch --network.host _non_loopback_
 
 data1:
+    container_name: data1
     extends:
       file: common.yml
       service: data
-    links:
-      - marvel
     ports:
       - 9201:9200
+      - 22:22
     command: ./elasticsearch --network.host _non_loopback_
 
 # marvel ES cluster
 marvel:
+    container_name: marvel
     extends:
       file: common.yml
       service: data
@@ -48,8 +48,6 @@ kibana_client:
         - ./logs:/logs
     ports:
       - 5601:5601
-    links:
-        - client
     command: /opt/kibana/bin/kibana --config /config/kibana.yml
 
 
@@ -61,7 +59,5 @@ kibana_marvel:
         - ./logs:/logs
     ports:
       - 5602:5601
-    links:
-        - marvel
     command: /opt/kibana/bin/kibana --config /config/kibana-marvel.yml
 

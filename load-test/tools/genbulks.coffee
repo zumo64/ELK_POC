@@ -1,0 +1,55 @@
+fs = require 'fs'
+mkdirp = require 'mkdirp'
+rimraf = require 'rimraf'
+JSONStream = require 'JSONStream'
+es = require 'event-stream'
+
+# lets improve this ..
+inputFolder = process.argv[2]
+outputFolder = process.argv[3]
+indexName = process.argv[4]
+typeName = process.argv[5]
+bulkSize = process.argv[6]
+nbFiles = process.argv[7]
+
+console.log "using input #{inputFolder}"
+
+getStream =  (file) ->
+  stream = fs.createReadStream(file, {encoding: 'utf8'})
+  parser = JSONStream.parse('*')
+  return stream.pipe(parser)
+
+
+lineCount = 0
+bulkCount = 0
+rimraf outputFolder, (err) ->    
+  mkdirp outputFolder,(err) ->
+    
+    fs.readdir inputFolder, (err,files) ->
+      console.log "processing #{files} #{err}"
+      for aFile in files when !fs.lstatSync("#{inputFolder}/#{aFile}").isDirectory() and aFile.substring(0,1) isnt "."
+        console.log "converting #{aFile} #{}..." 
+       
+        getStream("#{inputFolder}/#{aFile}").pipe es.mapSync (obj) ->
+        #fs.readFile "#{inputFolder}/#{aFile}", 'utf8',  (err, data) ->
+          throw err if err
+          lineCount++
+          indexLine = "{ \"index\" : { \"_index\" : \"#{indexName}\", \"_type\" : \"#{typeName}\" } }"
+          result = ""
+         
+          # switch to bext file when reached bulksize
+          if lineCount >= bulkSize
+            bulkCount++
+            if nbFiles? and bulkCount > nbFiles
+              console.log "#{bulkCount} reached ..  Stopping !"
+              process.exit()
+            console.log "creating file_#{bulkCount}.txt #{lineCount} lines"
+            lineCount=0
+            
+          outputFileName = "file_#{bulkCount}.txt"
+          result = "#{indexLine}\n#{JSON.stringify(obj)}\n"
+          fs.appendFile  "#{outputFolder}/#{outputFileName}", result,  (err) ->
+            throw err if err
+          
+          
+
