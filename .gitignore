@@ -1,2 +1,3 @@
 data
 .*.swp
+load-test/tools/node_modules

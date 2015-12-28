@@ -1,0 +1,47 @@
+
+# marvel ES cluster
+marvel:
+    container_name: marvel
+    extends:
+      file: common.yml
+      service: data
+    ports:
+      - 9203:9200
+      - 9300:9300
+    command: ./elasticsearch --marvel.agent.interval -1  --cluster.name marvel --network.host _non_loopback_
+
+
+kibana_marvel:
+    container_name: kibana_marvel
+    build: kibana
+    volumes:
+        - ./data:/data
+        - ./config:/config
+        - ./logs:/logs
+    ports:
+      - 5602:5601
+    command: /opt/kibana/bin/kibana --config /config/kibana-marvel.yml
+
+
+#command: sh -c "JVM_ARGS='-Xms1024m -Xmx1024m' ./jmeter -s -Djava.rmi.server.hostname=jmeter1"
+#jMeter servers
+jmeter1:
+    build: jmeter
+    container_name: jmeter1
+    hostname: jmeter1.elkpoc
+    volumes:
+      - ./load-test:/load-test
+    ports:
+      - 9200
+    command: sh -c "./jmeter -s -Djava.rmi.server.hostname=jmeter1.elkpoc"
+
+
+jmeter_client_1:
+    build: jmeter
+    volumes:
+      - ./load-test:/load-test
+    ports:
+      - 4445
+      - 9200
+    command: sh -c "sleep 120;./jmeter -n -t /load-test/run_queries_and_bulk_index_ext.jmx -GesHost=192.168.0.49 -GinputFiles=599 -GindexName=apachelogs -GtypeName=logs -GqueryThroughPut=60.0 -GindexThroughPut=120.0 -JtestRunId=T2712.1 -R jmeter1.elkpoc"
+

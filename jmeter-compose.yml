@@ -90,7 +90,7 @@ jmeter2:
     command: sh -c "./jmeter -s -Djava.rmi.server.hostname=jmeter2"
 
 
-jmeter_client:
+jmeter_client_1:
     build: jmeter
     volumes:
       - ./load-test:/load-test
@@ -101,5 +101,19 @@ jmeter_client:
       - jmeter2
       - marvel
       - client
-    command: sh -c "sleep 120; ./jmeter -n -t /load-test/run_queries_and_bulk_index.jmx -JqueryThroughPut=150.0 -JindexThroughPut=2.0 -JtestRunId=T8 -R jmeter1,jmeter2"
+    command: sh -c "sleep 120; ./jmeter -n -t /load-test/run_queries_and_bulk_index.jmx -GinputFiles=21 -GindexName=apachelogs -GtypeName=logs -GqueryThroughPut=20.0 -GindexThroughPut=10.0 -JtestRunId=T1812.2 -R jmeter1,jmeter2"
+
+
+# jmeter_client_2:
+#     build: jmeter
+#     volumes:
+#       - ./load-test:/load-test
+#     ports:
+#       - 4445
+#     links:
+#       - marvel
+#       - client
+#     command: sh -c "sleep 120; ./jmeter -n -t /load-test/cluster_health.jmx -JindexName=apachelogs -JtypeName=logs -JtestRunId=T1812.1"
+
+
 

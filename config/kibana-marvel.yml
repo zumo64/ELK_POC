@@ -1,6 +1,6 @@
 
 # The Elasticsearch instance to use for all your queries.
-elasticsearch_url: "http://marvel:9200"
+elasticsearch_url: "http://marvel.elkpoc:9200"
 
 # If your Elasticsearch is protected with basic auth, this is the user credentials
 # used by the Kibana server to perform maintence on the kibana_index at statup. Your Kibana

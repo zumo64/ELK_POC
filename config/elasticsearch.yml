@@ -3,7 +3,6 @@ cluster.name: elk_poc_cluster
 discovery.zen.ping.multicast.enabled: true
 
 
-
 path:
   data: /data/
   work: /data/work
@@ -30,10 +29,22 @@ script:
 marvel.agent.exporters:
   id1:
     type: http
-    host: ["http://marvel:9200"]
+    host: ["http://marvel.elkpoc:9200"]
     auth:
       username: es_admin
       password: password
 
 http:
   cors.enabled: true
+
+  
+index.search.slowlog.threshold.query.warn: 10s
+index.search.slowlog.threshold.query.info: 5s
+index.search.slowlog.threshold.query.debug: 2s
+index.search.slowlog.threshold.query.trace: 500ms
+
+index.search.slowlog.threshold.fetch.warn: 1s
+index.search.slowlog.threshold.fetch.info: 800ms
+index.search.slowlog.threshold.fetch.debug: 500ms
+index.search.slowlog.threshold.fetch.trace: 200ms
+

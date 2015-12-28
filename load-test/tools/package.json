@@ -1,0 +1,14 @@
+{
+  "name": "tools",
+  "version": "1.0.0",
+  "description": "tools for load testing",
+  "author": "zumo <zumo64@gmail.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "mkdirp": "^0.5.1",
+    "rimraf":"2.4.3",
+    "JSONStream":"1.0.7",
+    "event-stream":"3.3.2",
+    "datejs":"1.0.0-rc3"
+  }
+}

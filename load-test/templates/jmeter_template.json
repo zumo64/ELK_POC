@@ -1,0 +1,93 @@
+{
+    "mappings": {
+        "samplerResults": {
+            "_all": {
+                "enabled": false
+            },
+            "properties": {
+                "timestamp": {
+                    "format": "dateOptionalTime",
+                    "type": "date"
+                },
+                "assertions": {
+                    "properties": {
+                        "failure": {
+                            "type": "boolean"
+                        },
+                        "failureMessage": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    }
+                },
+                "bodySize": {
+                    "type": "integer"
+                },
+                "bytes": {
+                    "type": "integer"
+                },
+                "contentType": {
+                    "type": "string"
+                },
+                "dataType": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "errorCount": {
+                    "type": "integer"
+                },
+                "groupThreads": {
+                    "type": "integer"
+                },
+                "idleTime": {
+                    "type": "long"
+                },
+                "latency": {
+                    "type": "long"
+                },
+                "responseCode": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "responseMessage": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "sampleCount": {
+                    "type": "long"
+                },
+                "sampleLabel": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "sampleTime": {
+                    "type": "long"
+                },
+                "success": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "testRunId": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "threadName": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "url": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "settings": {
+        "number_of_replicas": 0,
+        "number_of_shards": 1
+    },
+    "template": ".jmeter-sampler-*"
+}

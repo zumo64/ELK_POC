@@ -3,8 +3,8 @@
     "key": ""
   },
   "es": {
-    "timefield": "@timestamp",
-    "default_index": "jmeter-sampler-*",
+    "timefield": "timestamp",
+    "default_index": ".*",
     "allow_url_parameter": false
   },
   "graphite": {
