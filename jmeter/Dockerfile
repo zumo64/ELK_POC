@@ -4,7 +4,7 @@ RUN apt-get update
 RUN apt-get install -y wget
 
 ENV JM_VERSION 2.13
-ENV ES_VERSION 2.1.0
+ENV ES_VERSION 2.1.1
 
 WORKDIR /opt
 
@@ -15,10 +15,10 @@ WORKDIR /opt/apache-jmeter/lib
 
 
 # and download all its dependencies
-RUN wget http://central.maven.org/maven2/org/elasticsearch/elasticsearch/2.1.0/elasticsearch-2.1.0.jar
+RUN wget http://central.maven.org/maven2/org/elasticsearch/elasticsearch/${ES_VERSION}/elasticsearch-${ES_VERSION}.jar
 RUN wget http://central.maven.org/maven2/org/apache/lucene/lucene-analyzers-common/5.3.1/lucene-analyzers-common-5.3.1.jar
 RUN wget http://central.maven.org/maven2/org/apache/lucene/lucene-core/5.3.1/lucene-core-5.3.1.jar
-RUN wget http://maven.elasticsearch.org/releases/org/elasticsearch/plugin/shield/2.1.0/shield-2.1.0.jar
+RUN wget http://maven.elasticsearch.org/releases/org/elasticsearch/plugin/shield/${ES_VERSION}/shield-${ES_VERSION}.jar
 
 RUN wget http://central.maven.org/maven2/com/google/guava/guava/18.0/guava-18.0.jar
 RUN wget http://central.maven.org/maven2/com/carrotsearch/hppc/0.7.1/hppc-0.7.1.jar
