@@ -4,6 +4,7 @@ client:
         - ./data:/data
         - ./config:/config
         - ./logs:/logs
+        - ./backups:/backups
     command: ./elasticsearch --network.host _non_loopback_ --node.client true --marvel.agent.interval -1
 
 data:
@@ -12,6 +13,7 @@ data:
         - ./data:/data
         - ./config:/config
         - ./logs:/logs
+        - ./backups:/backups
 
 master:
     build: elastic
@@ -19,4 +21,5 @@ master:
         - ./data:/data
         - ./config:/config
         - ./logs:/logs
+        - ./backups:/backups
     command: ./elasticsearch --node.data false --node.master true

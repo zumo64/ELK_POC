@@ -7,6 +7,7 @@ path:
   data: /data/
   work: /data/work
   logs: /logs
+  repo: ["/backups"]
 
 
 shield:

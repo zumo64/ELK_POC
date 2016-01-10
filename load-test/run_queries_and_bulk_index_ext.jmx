@@ -17,7 +17,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">2</stringProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
         <stringProp name="ThreadGroup.ramp_time">10</stringProp>
         <longProp name="ThreadGroup.start_time">1316089399000</longProp>
         <longProp name="ThreadGroup.end_time">1316089399000</longProp>
@@ -29,7 +29,7 @@
         <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager" enabled="true">
           <collectionProp name="AuthManager.auth_list">
             <elementProp name="" elementType="Authorization">
-              <stringProp name="Authorization.url">http://${__P(esHost,&apos;client&apos;)}:9200/${indexName}/${typeName}/_search</stringProp>
+              <stringProp name="Authorization.url">${__P(esProtocol,&apos;http&apos;)}://${__P(esHost,&apos;client&apos;)}:${__P(esPort,&apos;9200&apos;)}/${indexName}/${typeName}/_search</stringProp>
               <stringProp name="Authorization.username">es_admin</stringProp>
               <stringProp name="Authorization.password">password</stringProp>
               <stringProp name="Authorization.domain"></stringProp>
@@ -238,9 +238,9 @@
                 <stringProp name="Argument.value">es_admin:password</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="elasticsearchCluster" elementType="Argument">
-                <stringProp name="Argument.name">elasticsearchCluster</stringProp>
-                <stringProp name="Argument.value">marvel.elkpoc:9300</stringProp>
+              <elementProp name="host" elementType="Argument">
+                <stringProp name="Argument.name">host</stringProp>
+                <stringProp name="Argument.value">localhost:9300</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
               <elementProp name="indexName" elementType="Argument">
@@ -268,6 +268,11 @@
                 <stringProp name="Argument.value">false</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
+              <elementProp name="cloudCluster" elementType="Argument">
+                <stringProp name="Argument.name">cloudCluster</stringProp>
+                <stringProp name="Argument.value">false</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
             </collectionProp>
           </elementProp>
           <stringProp name="classname">co.elastic.jmeter.elasticsearch.ElasticSearchBackendListenerClient</stringProp>
@@ -292,7 +297,7 @@
         <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager" enabled="true">
           <collectionProp name="AuthManager.auth_list">
             <elementProp name="" elementType="Authorization">
-              <stringProp name="Authorization.url">http://${__P(esHost,&apos;client&apos;)}:9200/_bulk</stringProp>
+              <stringProp name="Authorization.url">${esProtocol}://${esHost}:${esPort}/_bulk</stringProp>
               <stringProp name="Authorization.username">es_admin</stringProp>
               <stringProp name="Authorization.password">password</stringProp>
               <stringProp name="Authorization.domain"></stringProp>
@@ -339,11 +344,11 @@ for (File file : files) {
                 </elementProp>
               </collectionProp>
             </elementProp>
-            <stringProp name="HTTPSampler.domain">${__P(esHost,&apos;client&apos;)}</stringProp>
-            <stringProp name="HTTPSampler.port">9200</stringProp>
+            <stringProp name="HTTPSampler.domain">${esHost}</stringProp>
+            <stringProp name="HTTPSampler.port">${esPort}</stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
-            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.protocol">${esProtocol}</stringProp>
             <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
             <stringProp name="HTTPSampler.path">/_bulk</stringProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -373,7 +378,7 @@ for (File file : files) {
             </com.atlantbh.jmeter.plugins.jsonutils.jsonpathextractor.JSONPathExtractor>
             <hashTree/>
           </hashTree>
-          <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
+          <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener Docker" enabled="false">
             <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="clusterName" elementType="Argument">
@@ -386,8 +391,61 @@ for (File file : files) {
                   <stringProp name="Argument.value">es_admin:password</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
-                <elementProp name="elasticsearchCluster" elementType="Argument">
-                  <stringProp name="Argument.name">elasticsearchCluster</stringProp>
+                <elementProp name="host" elementType="Argument">
+                  <stringProp name="Argument.name">host</stringProp>
+                  <stringProp name="Argument.value">localhost:9300</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="indexName" elementType="Argument">
+                  <stringProp name="Argument.name">indexName</stringProp>
+                  <stringProp name="Argument.value">.jmeter-sampler</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="indexType" elementType="Argument">
+                  <stringProp name="Argument.name">indexType</stringProp>
+                  <stringProp name="Argument.value">samplerResults</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="dateTimeAppendFormat" elementType="Argument">
+                  <stringProp name="Argument.name">dateTimeAppendFormat</stringProp>
+                  <stringProp name="Argument.value">-yyyy-MM-dd</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="testRunId" elementType="Argument">
+                  <stringProp name="Argument.name">testRunId</stringProp>
+                  <stringProp name="Argument.value">test</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="sniff" elementType="Argument">
+                  <stringProp name="Argument.name">sniff</stringProp>
+                  <stringProp name="Argument.value">false</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="cloudCluster" elementType="Argument">
+                  <stringProp name="Argument.name">cloudCluster</stringProp>
+                  <stringProp name="Argument.value">false</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="classname">co.elastic.jmeter.elasticsearch.ElasticSearchBackendListenerClient</stringProp>
+          </BackendListener>
+          <hashTree/>
+          <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener Found" enabled="true">
+            <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="clusterName" elementType="Argument">
+                  <stringProp name="Argument.name">clusterName</stringProp>
+                  <stringProp name="Argument.value">marvel</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="userPass" elementType="Argument">
+                  <stringProp name="Argument.name">userPass</stringProp>
+                  <stringProp name="Argument.value">es_admin:password</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="host" elementType="Argument">
+                  <stringProp name="Argument.name">host</stringProp>
                   <stringProp name="Argument.value">marvel.elkpoc:9300</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
@@ -413,6 +471,11 @@ for (File file : files) {
                 </elementProp>
                 <elementProp name="sniff" elementType="Argument">
                   <stringProp name="Argument.name">sniff</stringProp>
+                  <stringProp name="Argument.value">false</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="cloudCluster" elementType="Argument">
+                  <stringProp name="Argument.name">cloudCluster</stringProp>
                   <stringProp name="Argument.value">false</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
@@ -530,9 +593,9 @@ for (File file : files) {
                 <stringProp name="Argument.value">es_admin:password</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="elasticsearchCluster" elementType="Argument">
-                <stringProp name="Argument.name">elasticsearchCluster</stringProp>
-                <stringProp name="Argument.value">marvel:9300</stringProp>
+              <elementProp name="host" elementType="Argument">
+                <stringProp name="Argument.name">host</stringProp>
+                <stringProp name="Argument.value">localhost:9300</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
               <elementProp name="indexName" elementType="Argument">
@@ -557,6 +620,11 @@ for (File file : files) {
               </elementProp>
               <elementProp name="sniff" elementType="Argument">
                 <stringProp name="Argument.name">sniff</stringProp>
+                <stringProp name="Argument.value">false</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="cloudCluster" elementType="Argument">
+                <stringProp name="Argument.name">cloudCluster</stringProp>
                 <stringProp name="Argument.value">false</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
@@ -609,6 +677,21 @@ for (File file : files) {
           <elementProp name="typeName" elementType="Argument">
             <stringProp name="Argument.name">typeName</stringProp>
             <stringProp name="Argument.value">${__P(typeName,&quot;logs&quot;)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="esPort" elementType="Argument">
+            <stringProp name="Argument.name">esPort</stringProp>
+            <stringProp name="Argument.value">${__P(esPort,&apos;9200&apos;)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="esProtocol" elementType="Argument">
+            <stringProp name="Argument.name">esProtocol</stringProp>
+            <stringProp name="Argument.value">${__P(esProtocol,&apos;9200&apos;)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="esHost" elementType="Argument">
+            <stringProp name="Argument.name">esHost</stringProp>
+            <stringProp name="Argument.value">${__P(esHost,&apos;9200&apos;)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
