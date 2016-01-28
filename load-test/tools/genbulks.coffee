@@ -3,6 +3,7 @@ mkdirp = require 'mkdirp'
 rimraf = require 'rimraf'
 JSONStream = require 'JSONStream'
 es = require 'event-stream'
+require('datejs')
 
 # lets improve this ..
 inputFolder = process.argv[2]
@@ -11,6 +12,7 @@ indexName = process.argv[4]
 typeName = process.argv[5]
 bulkSize = process.argv[6]
 nbFiles = process.argv[7]
+indexType = process.argv[8]   # "daily" or "single"  (default single)
 
 console.log "using input #{inputFolder}"
 
@@ -34,9 +36,25 @@ rimraf outputFolder, (err) ->
         #fs.readFile "#{inputFolder}/#{aFile}", 'utf8',  (err, data) ->
           throw err if err
           lineCount++
-          indexLine = "{ \"index\" : { \"_index\" : \"#{indexName}\", \"_type\" : \"#{typeName}\" } }"
+          
+          indexOutputName = indexName
+          if indexType is "daily"
+            
+            #"timestamp":"22/Aug/2015:23:13:42 +0000" obj.timestamp
+            dateWork =  obj.timestamp
+            myRegexp = /([^:]*):(.*)\s/g
+            match = myRegexp.exec(dateWork)
+            #console.log "matched #{match[1]} === #{match[2]} "
+            datePart = Date.parse( match[1], 'dd/MMM/yyyy')
+            timePart = Date.parse( match[2], 'HH:mm:ss')
+            # logstash-%{+YYYY.MM.dd}
+            indexOutputName = "#{indexName}-#{datePart.toString('yyyy.MM.dd')}"
+
+          indexLine = "{ \"index\" : { \"_index\" : \"#{indexOutputName}\", \"_type\" : \"#{typeName}\" } }"
+          
           result = ""
-         
+                   
+          
           # switch to bext file when reached bulksize
           if lineCount >= bulkSize
             bulkCount++
@@ -45,7 +63,7 @@ rimraf outputFolder, (err) ->
               process.exit()
             console.log "creating file_#{bulkCount}.txt #{lineCount} lines"
             lineCount=0
-            
+         
           outputFileName = "file_#{bulkCount}.txt"
           result = "#{indexLine}\n#{JSON.stringify(obj)}\n"
           fs.appendFile  "#{outputFolder}/#{outputFileName}", result,  (err) ->
