@@ -78,9 +78,9 @@ Use jmeter-compose.yml to load ES as another docker container
 JMeter can be run from docker as well. In ``jmeter-compose.yml`` you can find
 an example that will run:
 
-1. an es cluster for marvel (1 node)
+1. 1 node ES cluster for marvel (1 node)
 
-2. elasticsearch cluster (client and 2 data nodes), shipping marvel data to marvel cluster
+2. 1 elasticsearch cluster (client and 2 data nodes), shipping marvel data to marvel cluster
 
 3. two jmeter servers
 
@@ -108,7 +108,7 @@ genbulks takes as an input 1 or many JSON files containing the prod representati
 The required fomat for each JSON file is an array of documents like this:
 [{doc1},{doc2},{doc3}........]
 
-example :
+example of an extract (2 documents) taken from the HoW training files :
 
 [{"message":"83.149.9.216 - - [22/Aug/2015:23:13:42 +0000] \"GET /presentations/logstash-monitorama-2013/images/kibana-dashboard3.png HTTP/1.1\" 200 171717 \"http://semicomplete.com/presentations/logstash-monitorama-2013/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.77 Safari/537.36\"","@version":"1","@timestamp":"2015-08-22T23:13:42.000Z","host":"Zumos-elastic-MacBook-Pro.local","clientip":"83.149.9.216","ident":"-","auth":"-","timestamp":"22/Aug/2015:23:13:42 +0000","verb":"GET","request":"/presentations/logstash-monitorama-2013/images/kibana-dashboard3.png","httpversion":"1.1","response":200,"bytes":171717,"referrer":"\"http://semicomplete.com/presentations/logstash-monitorama-2013/\"","agent":"\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.77 Safari/537.36\"","geoip":{"ip":"83.149.9.216","country_code2":"RU","country_code3":"RUS","country_name":"Russian Federation","continent_code":"EU","region_name":"48","city_name":"Moscow","latitude":55.75219999999999,"longitude":37.6156,"timezone":"Europe/Moscow","real_region_name":"Moscow City","location":[37.6156,55.75219999999999]},"useragent":{"name":"Chrome","os":"Mac OS X 10.9.1","os_name":"Mac OS X","os_major":"10","os_minor":"9","device":"Other","major":"32","minor":"0","patch":"1700"}},
 {"message":"83.149.9.216 - - [22/Aug/2015:23:13:44 +0000] \"GET /presentations/logstash-monitorama-2013/plugin/highlight/highlight.js HTTP/1.1\" 200 26185 \"http://semicomplete.com/presentations/logstash-monitorama-2013/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.77 Safari/537.36\"","@version":"1","@timestamp":"2015-08-22T23:13:44.000Z","host":"Zumos-elastic-MacBook-Pro.local","clientip":"83.149.9.216","ident":"-","auth":"-","timestamp":"22/Aug/2015:23:13:44 +0000","verb":"GET","request":"/presentations/logstash-monitorama-2013/plugin/highlight/highlight.js","httpversion":"1.1","response":200,"bytes":26185,"referrer":"\"http://semicomplete.com/presentations/logstash-monitorama-2013/\"","agent":"\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.77 Safari/537.36\"","geoip":{"ip":"83.149.9.216","country_code2":"RU","country_code3":"RUS","country_name":"Russian Federation","continent_code":"EU","region_name":"48","city_name":"Moscow","latitude":55.75219999999999,"longitude":37.6156,"timezone":"Europe/Moscow","real_region_name":"Moscow City","location":[37.6156,55.75219999999999]},"useragent":{"name":"Chrome","os":"Mac OS X 10.9.1","os_name":"Mac OS X","os_major":"10","os_minor":"9","device":"Other","major":"32","minor":"0","patch":"1700"}}]
@@ -140,7 +140,7 @@ You can call genbulks like this :
 coffee genbulks.coffee /Users/zumo/Desktop/inputlogs1/logs.json ./output apachelogs logs 500 5 daily
 
 
-* genDateIntervals.coffee generates a CSV file that can be used by jmeter when generating load at the query side. It will iterate this CSV file and use each column to set variable timestamp parameters for time range queries.
+* genDateIntervals.coffee generates a CSV file that can be used by jmeter when generating load at the query side. JMeter will iterate this CSV file and use each column to set variable timestamp parameters for time range queries.
 
 These are the parameters :
 
@@ -179,11 +179,11 @@ This Docker compose file contains :
 client,data1,data2 : ES Client and Data nodes = the ES instance we are load testing. (the target)
 
 marvel: The marvel monitoring cluster
-kibana_client: A kibana client for the ES target
-kibana_marvel: A Kibana client for the marvle instance
-jmeter1: A jmeter server (slave)
+kibana_client: A kibana 4.4  client for the ES target with Sense, Marvel, Shield, Timelion plugins
+kibana_marvel: A Kibana client for the marvle instance same plugins as above
+jmeter1: A jmeter server (slave) 2.13
 jmeter2: A jmeter server (slave)
-jmeter_client_1: the jmeter master 
+jmeter_client_1: the jmeter master client
 
 
 
@@ -192,7 +192,7 @@ jmeter_client_1: the jmeter master
 Run this compose if you are load testing an external ES instance (the target is outside Docker)
 
 marvel: The marvel monitoring cluster
-kibana_marvel: A Kibana client for the marvle instance
+kibana_marvel: A Kibana client for the marvel instance with Sense, Marvel, Shield, Timelion plugins
 jmeter1: A jmeter server (slave)
 jmeter_client_1: the jmeter master
 
@@ -200,6 +200,8 @@ jmeter_client_1: the jmeter master
 
 JMeter test plans 
 ==================
+Use es_admin/password credentials when logging to Kibana
+
 run_queries_and_bulk_index_ext
 run_queries_and_bulk_index
 
@@ -218,16 +220,49 @@ testRunId will tag the JMETER metrics (see below)
 
     
 
-step 1: set your input files (files generated by genbulks) in load-test/input 
-step 2: put your queries in the Queries Thread group (take example of vis_1_ apachelogs). In order to be more realistic refer to CSV files generated by  genDateIntervals so jmeter can send random queries.
+step 1: Place your input files (files generated by genbulks) in load-test/input.
+
+step 2: Place your queries in the "Queries Thread group" on the JMeter test plan. You should use a Jmeter GUI client for this , same version as the JMeter used in the docker container. In the packaged test plane you'll find  vis_1_apachelogs you can take as an example. In order to be perform more realistic tests and avoid caching use the  CSV files generated by  genDateIntervals so jmeter can send random queries.
+
+step 3: Create mappings : We need to create the indices with correct mappings prior to starting load testing.
+In order to create the correct mappings, start docker-compose ( docker-compose --x-networking up) and open the Kibana client (port 5602) for the marvel monitoring cluster. Then open a Sense console.
+Paste load-test/template/jmeter_tempate.json in order to create the template for the indices that will collect the Jmeter metrics (read below) . Use es_admin/password credentials
+
+If you are planning  to load test the ES target instance embedded in Docker (the one in jmeter-compose.yml) then open a Kibana client (port 5601) to the ES target cluster and, inside a sense console, create the index/ indices you are basing your test on. In this example we are creating the index apachelogs, the index creation is apachelogs_mappings.json. 
+
+If you are planning to test an external ES cluster then do the same as above but using a sense console pointing at it.
+
+
+step 4: start the performance test :
+Set the load test params in the 
+
+docker-compose -f jmeter-compose-ext.yml --x-networking up
+or docker-compose -f jmeter-compose.yml --x-networking up
+
+run one or the other depending wether your ES target is the one embedded in the docker compose,  or an extrenal instance
 
 
 
-JMeter metrics
-==============
+
+
+
+
+JMeter metrics (WIP)
+===================
 We are using the Jmeter backend listener API to send index latency and query latency to a separate index called .jmeter-sampler. The code for this sampler can be found in jmeter/ElasticSearchBackendListenerClient.java the corresponding jar is jmeter-elasticsearch.jar
-This is still WIP but you can basically visulize the latencies and assertion errors on a Timelion dashboard besides the marvel metrics. Will commit some example dasboards soon.
+This is still WIP but you can basically visulize the latencies and assertion errors on a Timelion dashboard besides the marvel metrics. 
 
+Timelion sheets below for your reference :
+
+"timelion_sheet": [
+            ".es(index='.jmeter-sampler-*',metric=avg:latency,q='sampleLabel:Bulk_index')",
+            ".es(index='.jmeter-sampler-*',q='sampleLabel:Bulk_index AND assertions.failure:true')",
+            ".es(index='.marvel-es-*',metric='avg:node_stats.jvm.mem.heap_used_percent',q='_type:node_stats')",
+            ".es(index='.marvel-es-*',metric='max:node_stats.jvm.gc.collectors.old.collection_time_in_millis',q='_type:node_stats'),.es(index='.marvel-es-*',metric='max:node_stats.jvm.gc.collectors.old.collection_count',q='_type:node_stats')",
+            ".es(index='.marvel-es-*',metric='avg:node_stats.process.cpu.percent',q='_type:node_stats')",
+            ".es(index='.marvel-es-*',metric='avg:node_stats.thread_pool.bulk.rejected',q='_type:node_stats')",
+            ".es(*)"
+          ]
 
 
 
