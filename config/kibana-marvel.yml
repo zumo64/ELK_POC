@@ -9,3 +9,10 @@ elasticsearch_url: "http://marvel.elkpoc:9200"
 kibana_elasticsearch_username: "kibana4-server"
 kibana_elasticsearch_password: "password"
 
+verify_ssl: true
+server.ssl.key: /config/server.key
+server.ssl.cert: /config/server.crt
+
+shield.encryptionKey: "something_secret"
+shield.sessionTimeout: 600000
+

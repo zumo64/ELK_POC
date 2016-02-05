@@ -6,10 +6,10 @@ This directory contains a demo of our commercial plugins.
 Setup
 -----
 
-Assuming you have working ``docker`` with ``docker-compose``, run::
+Assuming you have working ``docker 1.9.1`` with ``docker-compose``, run::
 
     docker-compose build
-    docker-compose up
+    docker-compose --x-networking up
 
 This will start a data node and a client node and publish the client node's
 9200 port.
@@ -71,6 +71,10 @@ The current setup uses 3 docker services : client, data1, data2
 JMeter
 -------
 
+
+Use jmeter-compose-ext.yml when load testing an external (bare metal) ES instance 
+Use jmeter-compose.yml to load ES as another docker container
+
 JMeter can be run from docker as well. In ``jmeter-compose.yml`` you can find
 an example that will run:
 
@@ -86,4 +90,10 @@ The jmeter client will start, wait for 20 seconds to give the clusters some
 time to come up and then run the test in ``load-test/test1.jmx`` on the two
 servers. The test is configured to work with shield and will log the results
 into the marvel cluster.
+
+
+load-test
+----------
+Some tools here that can be used for performance testing :
+
 

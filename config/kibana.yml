@@ -38,6 +38,11 @@ shard_timeout: 0
 # Set to false to have a complete disregard for the validity of the SSL
 # certificate.
 verify_ssl: true
+server.ssl.key: /config/server.key
+server.ssl.cert: /config/server.crt
+
+shield.encryptionKey: "something_secret"
+shield.sessionTimeout: 600000
 
 # If you need to provide a CA certificate for your Elasticsarech instance, put
 # the path of the pem file here.
