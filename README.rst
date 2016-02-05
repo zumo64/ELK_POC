@@ -6,6 +6,10 @@ This directory contains a demo of our commercial plugins.
 Setup
 -----
 
+This project should be installed under root dir /elk-poc
+ex : git clone https://github.com/zumo64/ELK_POC.git elk-poc
+
+
 Assuming you have working ``docker 1.9.1`` with ``docker-compose``, run::
 
     docker-compose build
@@ -234,10 +238,16 @@ If you are planning to test an external ES cluster then do the same as above but
 
 
 step 4: start the performance test :
-Set the load test params in the 
+
+docker-compose -f jmeter-compose-ext.yml build
+or 
+docker-compose -f jmeter-compose.yml build
+
+then
 
 docker-compose -f jmeter-compose-ext.yml --x-networking up
-or docker-compose -f jmeter-compose.yml --x-networking up
+or 
+docker-compose -f jmeter-compose.yml --x-networking up
 
 run one or the other depending wether your ES target is the one embedded in the docker compose,  or an extrenal instance
 
