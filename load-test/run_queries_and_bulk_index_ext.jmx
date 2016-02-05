@@ -378,7 +378,7 @@ for (File file : files) {
             </com.atlantbh.jmeter.plugins.jsonutils.jsonpathextractor.JSONPathExtractor>
             <hashTree/>
           </hashTree>
-          <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener Docker" enabled="false">
+          <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener Docker" enabled="true">
             <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="clusterName" elementType="Argument">
@@ -431,7 +431,7 @@ for (File file : files) {
             <stringProp name="classname">co.elastic.jmeter.elasticsearch.ElasticSearchBackendListenerClient</stringProp>
           </BackendListener>
           <hashTree/>
-          <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener Found" enabled="true">
+          <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener Found" enabled="false">
             <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="clusterName" elementType="Argument">

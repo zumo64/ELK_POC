@@ -5,9 +5,16 @@ import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
 
+import org.apache.jmeter.threads.JMeterContext;
+import org.apache.jmeter.threads.JMeterContextService;
+import org.apache.jmeter.threads.JMeterVariables;
 import org.apache.jmeter.util.JMeterUtils;
 import org.apache.jmeter.assertions.AssertionResult;
 import org.apache.jmeter.config.Arguments;
@@ -28,6 +35,7 @@ public class ElasticSearchBackendListenerClient extends AbstractBackendListenerC
 	private String dateTimeAppendFormat;
 	private String indexType;
 	private String testRunId;
+	private JMeterVariables vars;
 	
 	private static final int DEFAULT_ELASTICSEARCH_PORT = 9300;
 	private static final String VAR_DELIMITER = "~";
@@ -43,14 +51,19 @@ public class ElasticSearchBackendListenerClient extends AbstractBackendListenerC
 			Map<String,Object> jsonObject = getMap(result);
 			if(dateTimeAppendFormat != null) {
 				SimpleDateFormat sdf = new SimpleDateFormat(dateTimeAppendFormat);
-				indexNameToUse = indexName + sdf.format(jsonObject.get("@timestamp"));
+				indexNameToUse = indexName + sdf.format(jsonObject.get("timestamp"));
 			}
-			System.out.println("RUN ID" + testRunId + " "+ indexNameToUse);
+			//System.out.println("RUN ID" + testRunId + " "+ indexNameToUse);
 			client.prepareIndex(indexNameToUse, indexType).setSource(jsonObject).execute().actionGet();
-			System.out.println("Indexed ");
+			//System.out.println("Indexed ");
+			
 		}
 		
+		
+		
 	}
+	
+
 	
 	/**
 	 * @param result
@@ -80,7 +93,7 @@ public class ElasticSearchBackendListenerClient extends AbstractBackendListenerC
 		map.put("idleTime", result.getIdleTime());
 		
 		map.put("testRunId", testRunId);
-		map.put("@timestamp", new Date(result.getTimeStamp()));
+		map.put("timestamp", new Date(result.getTimeStamp()));
 		
 		
 		AssertionResult[] assertions = result.getAssertionResults();
@@ -98,16 +111,62 @@ public class ElasticSearchBackendListenerClient extends AbstractBackendListenerC
 		}
 		
 		
+		// Additional metrics may be passed using bsh samplers
+		Properties props = JMeterUtils.getJMeterProperties();
+		Set propKeys =props.keySet();
+		
+		Iterator i = propKeys.iterator();
+		while (i.hasNext()) {
+			String anEntry = (String)i.next();
+			//System.out.println(" prop  "+anEntry);
+			if (anEntry.startsWith("es_")) {
+				
+				
+				 String metric = JMeterUtils.getPropDefault(anEntry, null);
+				 if (metric != null) {
+					 //System.out.println(anEntry + " "+metric);
+					 if (anEntry.indexOf("_F") > 0) {
+						 Float m = Float.valueOf(metric);
+						 map.put(anEntry, m);
+					 }
+					 else
+					 if (anEntry.indexOf("_S") > 0) {
+						 
+						 map.put(anEntry, metric);
+					 }
+					 else
+					 if (anEntry.indexOf("_I") > 0) {
+						 Integer m = Integer.valueOf(metric);
+						 map.put(anEntry, m);
+					 }
+					 else
+					 if (anEntry.indexOf("_L") > 0) {
+						 Long m = Long.valueOf(metric);
+						 map.put(anEntry, m);
+					 }
+					 
+					
+				 }
+			}
+			
+		}
+		
+		
+		
 			
 		return map;
 	}
 
 	@Override
 	public void setupTest(BackendListenerContext context) throws Exception {
-		// TODO Auto-generated method stub
-        String elasticsearchCluster = context.getParameter("elasticsearchCluster");
+		
+		
+		
+		
+		/* comma separated list of hosts */
+        String host = context.getParameter("host");
         String userPass = context.getParameter("userPass");
-        String[] servers = elasticsearchCluster.split(",");
+        String[] servers = host.split(",");
         
         indexName = context.getParameter("indexName");
         dateTimeAppendFormat=context.getParameter("dateTimeAppendFormat");
@@ -118,31 +177,45 @@ public class ElasticSearchBackendListenerClient extends AbstractBackendListenerC
         
         indexType = context.getParameter("indexType");
         
-        context.getParameter("indexType");
-        
-       
         testRunId = JMeterUtils.getPropDefault("testRunId", context.getParameter( "testRunId" ) );
         
   
         String clusterName = context.getParameter("clusterName");
         
+        boolean cloudCluster = Boolean.valueOf(context.getParameter("cloudCluster"));
+        
         Settings settings = null;
         
         if (userPass != null) {
          
+        	if ( !cloudCluster) {
         	settings = Settings.settingsBuilder()
                 .put("cluster.name", clusterName)
                 .put("client.transport.sniff", Boolean.valueOf(context.getParameter("sniff")))
                 .put("plugin.types", "org.elasticsearch.shield.ShieldPlugin")
                 .put("shield.user", userPass)
                 .build();
+        	}
+        	else {
+        		settings = Settings.settingsBuilder()
+                .put("cluster.name", clusterName)
+                .put("client.transport.sniff", Boolean.valueOf(context.getParameter("sniff")))
+                .put("plugin.types", "org.elasticsearch.shield.ShieldPlugin")
+                .put("shield.user", userPass)
+                .put("transport.ping_schedule", "5s")
+                .put("action.bulk.compress", false)
+                .put("shield.transport.ssl", true)
+                .put("request.headers.X-Found-Cluster", clusterName)
+                .build();
+        	}
+        		
         }
         else {
         	settings = Settings.settingsBuilder()
                     .put("cluster.name", clusterName)
                     .put("client.transport.sniff", true)
                     .build();
-        }
+        	}
   
          client = TransportClient.builder()
   			  .addPlugin(ShieldPlugin.class)
@@ -150,7 +223,7 @@ public class ElasticSearchBackendListenerClient extends AbstractBackendListenerC
          
   			
 		//client = TransportClient.builder().settings(settings).build();
-	
+       System.out.println("Connecting ... ");
 		for(String serverPort: servers) {
 			String[] serverAndPort = serverPort.split(":");
 			int port = DEFAULT_ELASTICSEARCH_PORT;
@@ -162,8 +235,14 @@ public class ElasticSearchBackendListenerClient extends AbstractBackendListenerC
 		}
 		
 		
+		// TODO Get extra parameters 
+		// Iterator<String> iter = context.getParameterNamesIterator();
+		
+		
+		
+		
+		
 		super.setupTest(context);
-		System.out.println("Elastic jmeter backend listener ready !");
 	}
 
 	@Override
@@ -171,12 +250,13 @@ public class ElasticSearchBackendListenerClient extends AbstractBackendListenerC
         Arguments arguments = new Arguments();
         arguments.addArgument("clusterName", "elasticsearch");
         arguments.addArgument("userPass", "");
-        arguments.addArgument("elasticsearchCluster", "localhost:9300");
+        arguments.addArgument("host", "localhost:9300");
         arguments.addArgument("indexName", "jmeter-sampler");
         arguments.addArgument("indexType", "samplerResults");
         arguments.addArgument("dateTimeAppendFormat", "-yyyy-MM-dd");
         arguments.addArgument("testRunId", "test_0");
         arguments.addArgument("sniff", "true");
+        arguments.addArgument("cloudCluster", "false");
         return arguments;
 	}
 
