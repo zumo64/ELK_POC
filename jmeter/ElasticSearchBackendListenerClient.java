@@ -192,7 +192,6 @@ public class ElasticSearchBackendListenerClient extends AbstractBackendListenerC
         	settings = Settings.settingsBuilder()
                 .put("cluster.name", clusterName)
                 .put("client.transport.sniff", Boolean.valueOf(context.getParameter("sniff")))
-                .put("plugin.types", "org.elasticsearch.shield.ShieldPlugin")
                 .put("shield.user", userPass)
                 .build();
         	}
@@ -200,7 +199,6 @@ public class ElasticSearchBackendListenerClient extends AbstractBackendListenerC
         		settings = Settings.settingsBuilder()
                 .put("cluster.name", clusterName)
                 .put("client.transport.sniff", Boolean.valueOf(context.getParameter("sniff")))
-                .put("plugin.types", "org.elasticsearch.shield.ShieldPlugin")
                 .put("shield.user", userPass)
                 .put("transport.ping_schedule", "5s")
                 .put("action.bulk.compress", false)
