@@ -29,7 +29,7 @@
         <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager" enabled="true">
           <collectionProp name="AuthManager.auth_list">
             <elementProp name="" elementType="Authorization">
-              <stringProp name="Authorization.url">http://client:9200/${indexName}/${typeName}/_search</stringProp>
+              <stringProp name="Authorization.url">http://client.elkpoc:9200/${indexName}/${typeName}/_search</stringProp>
               <stringProp name="Authorization.username">es_admin</stringProp>
               <stringProp name="Authorization.password">password</stringProp>
               <stringProp name="Authorization.domain"></stringProp>
@@ -93,7 +93,7 @@
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.domain">client</stringProp>
+          <stringProp name="HTTPSampler.domain">client.elkpoc</stringProp>
           <stringProp name="HTTPSampler.port">9200</stringProp>
           <stringProp name="HTTPSampler.connect_timeout"></stringProp>
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
@@ -134,9 +134,9 @@
                 <stringProp name="Argument.value">es_admin:password</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="elasticsearchCluster" elementType="Argument">
-                <stringProp name="Argument.name">elasticsearchCluster</stringProp>
-                <stringProp name="Argument.value">marvel:9300</stringProp>
+              <elementProp name="host" elementType="Argument">
+                <stringProp name="Argument.name">host</stringProp>
+                <stringProp name="Argument.value">localhost:9300</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
               <elementProp name="indexName" elementType="Argument">
@@ -161,6 +161,11 @@
               </elementProp>
               <elementProp name="sniff" elementType="Argument">
                 <stringProp name="Argument.name">sniff</stringProp>
+                <stringProp name="Argument.value">false</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="cloudCluster" elementType="Argument">
+                <stringProp name="Argument.name">cloudCluster</stringProp>
                 <stringProp name="Argument.value">false</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
@@ -282,9 +287,9 @@ for (File file : files) {
                   <stringProp name="Argument.value">es_admin:password</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
-                <elementProp name="elasticsearchCluster" elementType="Argument">
-                  <stringProp name="Argument.name">elasticsearchCluster</stringProp>
-                  <stringProp name="Argument.value">marvel:9300</stringProp>
+                <elementProp name="host" elementType="Argument">
+                  <stringProp name="Argument.name">host</stringProp>
+                  <stringProp name="Argument.value">localhost:9300</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
                 <elementProp name="indexName" elementType="Argument">
@@ -309,6 +314,11 @@ for (File file : files) {
                 </elementProp>
                 <elementProp name="sniff" elementType="Argument">
                   <stringProp name="Argument.name">sniff</stringProp>
+                  <stringProp name="Argument.value">false</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="cloudCluster" elementType="Argument">
+                  <stringProp name="Argument.name">cloudCluster</stringProp>
                   <stringProp name="Argument.value">false</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
@@ -426,9 +436,9 @@ for (File file : files) {
                 <stringProp name="Argument.value">es_admin:password</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
-              <elementProp name="elasticsearchCluster" elementType="Argument">
-                <stringProp name="Argument.name">elasticsearchCluster</stringProp>
-                <stringProp name="Argument.value">marvel:9300</stringProp>
+              <elementProp name="host" elementType="Argument">
+                <stringProp name="Argument.name">host</stringProp>
+                <stringProp name="Argument.value">localhost:9300</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
               <elementProp name="indexName" elementType="Argument">
@@ -453,6 +463,11 @@ for (File file : files) {
               </elementProp>
               <elementProp name="sniff" elementType="Argument">
                 <stringProp name="Argument.name">sniff</stringProp>
+                <stringProp name="Argument.value">false</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="cloudCluster" elementType="Argument">
+                <stringProp name="Argument.name">cloudCluster</stringProp>
                 <stringProp name="Argument.value">false</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>

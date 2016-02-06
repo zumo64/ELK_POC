@@ -1,41 +1,42 @@
 client:
+    container_name: client
     extends:
       file: common.yml
       service: client
     ports:
         - 9200:9200
-    links:
-      - marvel
+        - 22:22
 
 
 #main ES cluster
 data2:
+    container_name: data2
     extends:
       file: common.yml
       service: data
-    links:
-      - marvel
     ports:
       - 9202:9200
+      - 22:22
     command: ./elasticsearch --network.host _non_loopback_
 
 data1:
+    container_name: data1
     extends:
       file: common.yml
       service: data
-    links:
-      - marvel
     ports:
       - 9201:9200
+      - 22:22
     command: ./elasticsearch --network.host _non_loopback_
 
 
 # marvel ES cluster
 marvel:
+    container_name: marvel
+    hostname: marvel.elkpoc
     extends:
       file: common.yml
       service: data
-    hostname: marvel
     ports:
       - 9203:9200
       - 9300:9300
@@ -43,6 +44,7 @@ marvel:
 
 
 kibana_client:
+    container_name: kibana_client
     build: kibana
     volumes:
         - ./data:/data
@@ -50,12 +52,11 @@ kibana_client:
         - ./logs:/logs
     ports:
       - 5601:5601
-    links:
-        - client
     command: /opt/kibana/bin/kibana --config /config/kibana.yml
 
 
 kibana_marvel:
+    container_name: kibana_marvel
     build: kibana
     volumes:
         - ./data:/data
@@ -63,31 +64,26 @@ kibana_marvel:
         - ./logs:/logs
     ports:
       - 5602:5601
-    links:
-        - marvel
     command: /opt/kibana/bin/kibana --config /config/kibana-marvel.yml
+
 
 
 # jMeter servers
 jmeter1:
     build: jmeter
-    hostname: jmeter1
+    container_name: jmeter1
+    hostname: jmeter1.elkpoc
     volumes:
       - ./load-test:/load-test
-    links:
-      - client
-      - marvel
-    command: sh -c "./jmeter -s -Djava.rmi.server.hostname=jmeter1"
+    command: sh -c "./jmeter -s -Djava.rmi.server.hostname=jmeter1.elkpoc"
 
 jmeter2:
     build: jmeter
-    hostname: jmeter2
+    container_name: jmeter2
+    hostname: jmeter2.elkpoc
     volumes:
       - ./load-test:/load-test
-    links:
-      - client
-      - marvel
-    command: sh -c "./jmeter -s -Djava.rmi.server.hostname=jmeter2"
+    command: sh -c "./jmeter -s -Djava.rmi.server.hostname=jmeter2.elkpoc"
 
 
 jmeter_client_1:
@@ -96,14 +92,13 @@ jmeter_client_1:
       - ./load-test:/load-test
     ports:
       - 4445
-    links:
-      - jmeter1
-      - jmeter2
-      - marvel
-      - client
-    command: sh -c "sleep 120; ./jmeter -n -t /load-test/run_queries_and_bulk_index.jmx -GinputFiles=21 -GindexName=apachelogs -GtypeName=logs -GqueryThroughPut=20.0 -GindexThroughPut=10.0 -JtestRunId=T1812.2 -R jmeter1,jmeter2"
+      - 9200
+    command: sh -c "sleep 120; ./jmeter -n -t /load-test/run_queries_and_bulk_index.jmx -GinputFiles=599 -GindexName=apachelogs -GtypeName=logs -GqueryThroughPut=60.0 -GindexThroughPut=1.0 -JtestRunId=T0602.1 -R jmeter1.elkpoc,jmeter2.elkpoc"
 
 
+
+
+# WIP below
 # jmeter_client_2:
 #     build: jmeter
 #     volumes:

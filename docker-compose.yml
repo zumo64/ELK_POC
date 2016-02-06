@@ -30,7 +30,6 @@ data1:
 
 # marvel ES cluster
 marvel:
-    hostname: marvel.elkpoc
     container_name: marvel
     extends:
       file: common.yml
