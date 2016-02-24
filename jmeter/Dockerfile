@@ -22,7 +22,7 @@ RUN wget http://maven.elasticsearch.org/releases/org/elasticsearch/plugin/shield
 
 RUN wget http://central.maven.org/maven2/com/google/guava/guava/18.0/guava-18.0.jar
 RUN wget http://central.maven.org/maven2/com/carrotsearch/hppc/0.7.1/hppc-0.7.1.jar
-RUN wget http://central.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.5.3/jackson-core-2.5.3.jar
+RUN wget http://central.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.6.2/jackson-core-2.6.2.jar
 RUN wget http://central.maven.org/maven2/com/twitter/jsr166e/1.1.0/jsr166e-1.1.0.jar
 RUN wget http://central.maven.org/maven2/com/tdunning/t-digest/3.0/t-digest-3.0.jar
 RUN wget http://central.maven.org/maven2/org/joda/joda-convert/1.2/joda-convert-1.2.jar

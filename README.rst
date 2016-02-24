@@ -233,7 +233,7 @@ In order to create the correct mappings, start docker-compose ( docker-compose -
 Then open a Sense console pointing to the marvel sense cluster (ex : http://192.168.99.100:9203)
 Paste load-test/template/jmeter_tempate.json in order to create the template for the indices that will collect the Jmeter metrics (read below) . Use es_admin/password credentials
 
-If you are planning  to load test the ES target instance embedded in Docker (the one in jmeter-compose.yml) then open a Kibana client (port 5601) to the ES target cluster and, from the sense console (poining to http://192.168.99.100:9200), create the index/ indices you are basing your test on. In this example we are creating the index apachelogs, the index creation is apachelogs_mappings.json. 
+If you are planning  to load test the ES target instance embedded in Docker (the one in jmeter-compose.yml) from the sense console (poining to http://192.168.99.100:9200), create the index/ indices you are basing your test on. In this example we are creating the index apachelogs, the index creation is apachelogs_mappings.json. 
 
 If you are planning to test an external ES cluster then do the same as above but using a sense console pointing at it.
 
