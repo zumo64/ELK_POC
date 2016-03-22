@@ -141,7 +141,7 @@ The jmeter test plans will know how to iterate over the generated files and crea
 
 
 You can call genbulks like this :
-coffee genbulks.coffee /Users/zumo/Desktop/inputlogs1/logs.json ./output apachelogs logs 500 5 daily
+coffee genbulks.coffee /Users/zumo/Desktop/inputlogs1 ./output apachelogs logs 500 5 daily
 
 
 * genDateIntervals.coffee generates a CSV file that can be used by jmeter when generating load at the query side. JMeter will iterate this CSV file and use each column to set variable timestamp parameters for time range queries.
