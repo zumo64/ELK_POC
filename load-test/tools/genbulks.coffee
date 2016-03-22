@@ -58,7 +58,7 @@ rimraf outputFolder, (err) ->
           # switch to bext file when reached bulksize
           if lineCount >= bulkSize
             bulkCount++
-            if nbFiles? and bulkCount > nbFiles
+            if nbFiles>0 and bulkCount > nbFiles
               console.log "#{bulkCount} reached ..  Stopping !"
               process.exit()
             console.log "creating file_#{bulkCount}.txt #{lineCount} lines"
