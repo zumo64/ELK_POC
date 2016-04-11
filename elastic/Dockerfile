@@ -7,7 +7,7 @@ RUN apt-get install -y sysstat
 #RUN apt-get install curl sudo -y
 
 
-ENV ES_VERSION 2.2.0
+ENV ES_VERSION 2.3.1
 
 #ENV GOSU_URL https://github.com/tianon/gosu/releases/download/1.6/gosu-amd64
 #RUN useradd -m -s /bin/bash -g users -G sudo -p elastic elastic && \

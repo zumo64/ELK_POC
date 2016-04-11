@@ -11,7 +11,7 @@ transport_client:
     - cluster:monitor/state
 
 watcher_admin:
-    cluster: manage_watcher
+    cluster: manage
 
 
 marvel_agent:

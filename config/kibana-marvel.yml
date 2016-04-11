@@ -10,8 +10,11 @@ kibana_elasticsearch_username: "kibana4-server"
 kibana_elasticsearch_password: "password"
 
 verify_ssl: true
-server.ssl.key: /config/server.key
-server.ssl.cert: /config/server.crt
+#server.ssl.key: /config/server.key
+#server.ssl.cert: /config/server.crt
+server.ssl.key: /config/kibana.key
+server.ssl.cert: /config/kibana.crt
+
 
 shield.encryptionKey: "something_secret"
 shield.sessionTimeout: 600000
