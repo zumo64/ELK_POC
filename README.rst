@@ -112,6 +112,8 @@ genbulks takes as an input 1 or many JSON files containing the prod representati
 The required fomat for each JSON file is an array of documents like this:
 [{doc1},{doc2},{doc3}........]
 
+You can use the linesToJson tool to automatically add the comma and square brackets as above. 
+
 example of an extract (2 documents) taken from the HoW training files :
 
 [{"message":"83.149.9.216 - - [22/Aug/2015:23:13:42 +0000] \"GET /presentations/logstash-monitorama-2013/images/kibana-dashboard3.png HTTP/1.1\" 200 171717 \"http://semicomplete.com/presentations/logstash-monitorama-2013/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.77 Safari/537.36\"","@version":"1","@timestamp":"2015-08-22T23:13:42.000Z","host":"Zumos-elastic-MacBook-Pro.local","clientip":"83.149.9.216","ident":"-","auth":"-","timestamp":"22/Aug/2015:23:13:42 +0000","verb":"GET","request":"/presentations/logstash-monitorama-2013/images/kibana-dashboard3.png","httpversion":"1.1","response":200,"bytes":171717,"referrer":"\"http://semicomplete.com/presentations/logstash-monitorama-2013/\"","agent":"\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.77 Safari/537.36\"","geoip":{"ip":"83.149.9.216","country_code2":"RU","country_code3":"RUS","country_name":"Russian Federation","continent_code":"EU","region_name":"48","city_name":"Moscow","latitude":55.75219999999999,"longitude":37.6156,"timezone":"Europe/Moscow","real_region_name":"Moscow City","location":[37.6156,55.75219999999999]},"useragent":{"name":"Chrome","os":"Mac OS X 10.9.1","os_name":"Mac OS X","os_major":"10","os_minor":"9","device":"Other","major":"32","minor":"0","patch":"1700"}},
@@ -134,7 +136,7 @@ indexName : the name of the index
 typeName = the Type name
 bulkSize = Number of dpcs on each bulk (example: 500)
 nbFiles = Number of chunks to generate (set to -1 for let it generate as many as needed)
-indexType =  "daily" or "single"  (default single) Use this option if you want to index to daily indices (ex daily logs) or one only index) When using daily , it will use the timestamp field in the source docs.
+indexType =  "daily" or "single" or "none" (default single) Use this option if you want to index to daily indices (ex daily logs) or one only index) When using daily , it will use the timestamp field in the source docs. "none" will skip the index line in the bulk 
 
 
 The jmeter test plans will know how to iterate over the generated files and create index load.

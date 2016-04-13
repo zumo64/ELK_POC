@@ -12,7 +12,8 @@ indexName = process.argv[4]
 typeName = process.argv[5]
 bulkSize = process.argv[6]
 nbFiles = process.argv[7]
-indexType = process.argv[8]   # "daily" or "single"  (default single)
+indexType = process.argv[8]   # "daily" / "single" / "none" (default single)
+
 
 console.log "using input #{inputFolder}"
 
@@ -33,8 +34,9 @@ rimraf outputFolder, (err) ->
         console.log "converting #{aFile} #{}..." 
        
         getStream("#{inputFolder}/#{aFile}").pipe es.mapSync (obj) ->
-        #fs.readFile "#{inputFolder}/#{aFile}", 'utf8',  (err, data) ->
+
           throw err if err
+          
           lineCount++
           
           indexOutputName = indexName
@@ -52,22 +54,25 @@ rimraf outputFolder, (err) ->
 
           indexLine = "{ \"index\" : { \"_index\" : \"#{indexOutputName}\", \"_type\" : \"#{typeName}\" } }"
           
-          result = ""
-                   
           
-          # switch to bext file when reached bulksize
+          # switch to next file when reached bulksize
           if lineCount >= bulkSize
+                        
             bulkCount++
             if nbFiles>0 and bulkCount > nbFiles
               console.log "#{bulkCount} reached ..  Stopping !"
               process.exit()
+              
             console.log "creating file_#{bulkCount}.txt #{lineCount} lines"
             lineCount=0
          
           outputFileName = "file_#{bulkCount}.txt"
-          result = "#{indexLine}\n#{JSON.stringify(obj)}\n"
+
+          if indexType is "none"
+            result = "#{JSON.stringify(obj)}\n"
+          else
+            result = "#{indexLine}\n#{JSON.stringify(obj)}\n"
+          
           fs.appendFile  "#{outputFolder}/#{outputFileName}", result,  (err) ->
             throw err if err
-          
-          
-
+  
