@@ -1,4 +1,5 @@
-fs = require 'fs'
+# This is buggy do not use
+fs = require('graceful-fs-extra')
 mkdirp = require 'mkdirp'
 rimraf = require 'rimraf'
 JSONStream = require 'JSONStream'
